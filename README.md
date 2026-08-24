@@ -104,4 +104,4 @@ Student der Wirtschaftsinformatik (HTWG Konstanz)
 
 Fachlicher Schwerpunkt: IT-Sicherheitsarchitekturen, Systemadministration & Cloud-Free Homelabs
 
-Kontakt: [LinkedIn-Profil] (www.linkedin.com/in/miguel-angel-fernandez-kummnik) | [E-Mail-Adresse] (mi451fer@htwg-konstanz.de)
+Kontakt: [LinkedIn-Profil](https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | [E-Mail-Adresse](mailto:mi451fer@htwg-konstanz.de)
