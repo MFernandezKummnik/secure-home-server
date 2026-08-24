@@ -80,22 +80,22 @@ Speichereffizienz via H.265/HEVC: Automatisierte Transkodierungs-Pipeline, die e
 Automatisierter Node-Workflow: Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
 ## 4. Roadmap & Geplante Erweiterungen
-[ ] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
+- [ ] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
 
-[ ] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
+- [ ] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
 
-[ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
+- [ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
 
-[ ] Netzwerk-Härtung: Umfassende Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte.
+- [ ] Netzwerk-Härtung: Umfassende Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte.
 
 ## 5. Repository-Struktur
 In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehende Dokumentationen:
 
-docs/: Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
+* **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-docker/: Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr und Administrative Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr und Administrative Tools.
 
-scripts/: (In Entwicklung) Eigene Skripte für Automatisierung, Backup-Routinen und File-Management.
+* **[`scripts/`](scripts/):** (In Entwicklung) Eigene Skripte für Automatisierung, Backup-Routinen und File-Management.
 
 ---
 
