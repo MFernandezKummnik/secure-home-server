@@ -63,7 +63,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 |  |  UNASSIGNED DEVICE: 250 GB HDD (Aktive Uni-Daten)                 |     |
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
-````
+
 3.1 Videostreams & Heimkino (Jellyfin)
 Direct Play & Hardware-Beschleunigung: Reines, open-source Medienserver-Setup ohne externe Pass-Through-Server. Nutzt die Intel UHD 730 Grafikeinheit (QuickSync) für verzögerungsfreies Hardware-Transcoding im Bedarfsfall.
 
@@ -96,7 +96,7 @@ docs/: Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und
 docker/: Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr und Administrative Tools.
 
 scripts/: (In Entwicklung) Eigene Skripte für Automatisierung, Backup-Routinen und File-Management.
-
+```
 ## Autor
 
 **Miguel**
