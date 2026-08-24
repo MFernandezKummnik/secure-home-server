@@ -63,7 +63,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 |  |  UNASSIGNED DEVICE: 250 GB HDD (Aktive Uni-Daten)                 |     |
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
-
+````
 3.1 Videostreams & Heimkino (Jellyfin)
 Direct Play & Hardware-Beschleunigung: Reines, open-source Medienserver-Setup ohne externe Pass-Through-Server. Nutzt die Intel UHD 730 Grafikeinheit (QuickSync) für verzögerungsfreies Hardware-Transcoding im Bedarfsfall.
 
@@ -97,10 +97,6 @@ docker/: Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Td
 
 scripts/: (In Entwicklung) Eigene Skripte für Automatisierung, Backup-Routinen und File-Management.
 
-Hier ist der komplette Block für den Abschnitt **Autor**. Du kannst ihn direkt kopieren und am Ende deiner `README.md` einfügen (ohne Einrückungen ganz am linken Rand, damit die Links blau und anklickbar gerendert werden):
-
----
-
 ## Autor
 
 **Miguel**
@@ -109,4 +105,4 @@ Student der Wirtschaftsinformatik (HTWG Konstanz)
 
 **Fachlicher Schwerpunkt:** IT-Sicherheitsarchitekturen, Systemadministration & Cloud-Free Homelabs
 
-**Kontakt:** [LinkedIn](https://www.google.com/search?q=https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | [E-Mail](https://www.google.com/search?q=mailto%3Ami451fer%40htwg-konstanz.de)
+**Kontakt:** [LinkedIn](https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | [E-Mail](mailto:mi451fer@htwg-konstanz.de)
