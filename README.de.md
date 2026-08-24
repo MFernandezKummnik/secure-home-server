@@ -1,5 +1,7 @@
 # Self-Hosted Cloud-Free Home Server & Infrastructure
 
+[ English ](README.md) | [ **Deutsch** ](README.de.md)
+
 [![OS: Linux / Unraid](https://img.shields.io/badge/OS-Unraid_Linux-orange.svg)](https://unraid.net/)
 [![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust_%7C_LUKS-emerald.svg)]()
 [![Stack: Docker](https://img.shields.io/badge/Stack-Docker_%7C_Jellyfin_%7C_Tdarr-brightgreen.svg)]()
