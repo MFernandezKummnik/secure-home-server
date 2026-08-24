@@ -33,7 +33,7 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 | **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Internes Slim-Laufwerk via USB-Adapter; LibreDrive-Kompatibilität zum verlustfreien Auslesen eigener Medien. *Hinweis:* Auslösung rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
 | **Bootmedium** | 32 GB Samsung BAR Plus (USB 3.1) | Schreibgeschützter Unraid-Boot-Stick; robustes Metallgehäuse für optimale Wärmeableitung im 24/7-Dauerbetrieb. |
 | **CPU-Kühler** | Thermalright Assassin X 120 SE | Tower-Kühler mit leisem 120mm PWM-Lüfter; verhindert Thermal Throttling bei dauerhafter CPU-Volllast. |
-| **Netzteil** | be quiet! System Power 11 450W (80+ Gold) | Hocheffizientes Netzteil mit Nativ C6/C7-State-Unterstützung für minimale Verlustleistung bei niedriger Idle-Last. |
+| **Netzteil** | be quiet! System Power 11 450W (80+ Bronze) | Hocheffizientes Netzteil mit Nativ C6/C7-State-Unterstützung für minimale Verlustleistung bei niedriger Idle-Last. |
 | **Gehäuse** | Fractal Design Define R5 (Black) | ATX Midi-Tower mit Schalldämmung, entkoppelten Festplattenschächten (Vibrationsdämpfung) und großzügigen Staubfiltern. |
 
 ---
