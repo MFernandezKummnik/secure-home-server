@@ -63,23 +63,23 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 |  |  UNASSIGNED DEVICE: 250 GB HDD (Aktive Uni-Daten)                 |     |
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
-
-3.1 Videostreams & Heimkino (Jellyfin)
+```
+## 3.1 Videostreams & Heimkino (Jellyfin)
 Direct Play & Hardware-Beschleunigung: Reines, open-source Medienserver-Setup ohne externe Pass-Through-Server. Nutzt die Intel UHD 730 Grafikeinheit (QuickSync) für verzögerungsfreies Hardware-Transcoding im Bedarfsfall.
 
 Plattformunabhängig: Streamt unkomprimierte Inhalte direkt an Endgeräte im Heimnetz (z. B. Apple TV 4K) sowie an mobile Clients unterwegs.
 
-3.2 Hi-Fi Musikbibliothek (Navidrome)
+## 3.2 Hi-Fi Musikbibliothek (Navidrome)
 High-Performance Streaming: Ressourcenschonender, in Go geschriebener Musikserver für eigene CD-Rips (FLAC/MP3).
 
 Universelle Schnittstelle: Nutzt die Subsonic-API zur nahtlosen Anbindung mobiler Apps (iPhone/Android) im Auto oder unterwegs, ohne auf Drittanbieter-Abo-Dienste angewiesen zu sein.
 
-3.3 Automatische Medienoptimierung (Tdarr Pipeline)
+## 3.3 Automatische Medienoptimierung (Tdarr Pipeline)
 Speichereffizienz via H.265/HEVC: Automatisierte Transkodierungs-Pipeline, die eingehende Videodateien analysiert und in das hocheffiziente H.265-Format konvertiert.
 
 Automatisierter Node-Workflow: Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
-4. Roadmap & Geplante Erweiterungen
+## 4. Roadmap & Geplante Erweiterungen
 [ ] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
 
 [ ] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
@@ -88,7 +88,7 @@ Automatisierter Node-Workflow: Reduziert die Dateigrößen bei gleichbleibender 
 
 [ ] Netzwerk-Härtung: Umfassende Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte.
 
-5. Repository-Struktur
+## 5. Repository-Struktur
 In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehende Dokumentationen:
 
 docs/: Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
@@ -96,7 +96,9 @@ docs/: Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und
 docker/: Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr und Administrative Tools.
 
 scripts/: (In Entwicklung) Eigene Skripte für Automatisierung, Backup-Routinen und File-Management.
-```
+
+---
+
 ## Autor
 
 **Miguel**
@@ -105,4 +107,4 @@ Student der Wirtschaftsinformatik (HTWG Konstanz)
 
 **Fachlicher Schwerpunkt:** IT-Sicherheitsarchitekturen, Systemadministration & Cloud-Free Homelabs
 
-**Kontakt:** [LinkedIn](https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | [E-Mail](mailto:mi451fer@htwg-konstanz.de)
+**Kontakt:** - [LinkedIn](https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | - [E-Mail](mailto:mi451fer@htwg-konstanz.de)
