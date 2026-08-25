@@ -74,3 +74,27 @@ Dedicated exclusively to Audio CD extraction.
           |
           v
 [ Move to Final Media Pool (/mnt/user/Media) ]
+```
+---
+
+## 4. Hardware Selection & Trade-Off Analysis (Decision Log)
+
+This section documents the explicit architectural trade-offs and alternative components evaluated during the hardware selection process.
+
+### 4.1 CPU: Intel Core i3-12100 vs. Alternatives
+* **Evaluated Alternatives:** AMD Ryzen 5 4600G / 5600G, Older Intel Xeons (E3/E5 series), Intel N100 / N305.
+* **Decision:** Selected the **Intel Core i3-12100**.
+* **Rationale & Trade-off:**
+  * **vs. AMD Ryzen APUs:** AMD lacks native support for Intel QuickSync, which is crucial for efficient Jellyfin video transcoding without heavy CPU utilization.
+  * **vs. Enterprise Xeons:** Older Xeons offer high core counts but suffer from poor idle power efficiency, high TDP, and lack modern QuickSync hardware decoders (HEVC/AV1).
+  * **vs. Intel N100 (SFF/Mini-PC):** While the N100 boasts minimal power consumption, it lacks PCIe lane density and SATA connectivity for a multi-drive HDD array and optical drive passthrough.
+
+### 4.2 Storage & Array Layout
+* **Evaluated Alternatives:** Standard RAID 1/5 (ZFS / Hardware RAID), Unraid Parity.
+* **Decision:** Selected **Unraid Array with dedicated Cache Tier**.
+* **Rationale & Trade-off:**
+  * Traditional RAID arrays require all drives to spin up simultaneously during reads, increasing power consumption and thermal load.
+  * Unraid allows individual drive spin-ups for media playback while maintaining XOR parity protection, saving significant energy during 24/7 operation.
+  * The dedicated **250 GB Unassigned Device** prevents frequent spin-ups of the primary 10 TB HPE Enterprise HDDs when accessing active academic documents.
+---
+```
