@@ -76,8 +76,11 @@ High-Performance Streaming: Ressourcenschonender, in Go geschriebener Musikserve
 
 Universelle Schnittstelle: Nutzt die Subsonic-API zur nahtlosen Anbindung mobiler Apps (iPhone/Android) im Auto oder unterwegs, ohne auf Drittanbieter-Abo-Dienste angewiesen zu sein.
 
-## 3.3 Automatische Medienoptimierung (Tdarr Pipeline)
-Speichereffizienz via H.265/HEVC: Automatisierte Transkodierungs-Pipeline, die eingehende Videodateien analysiert und in das hocheffiziente H.265-Format konvertiert.
+## ### 3.3 Automatische Medienoptimierung (Tdarr Pipeline)
+* **Auflösungsabhängige Transkodierungs-Logik:** 
+  * **Geringe Auflösung (SD/DVD):** Verarbeitung über die **CPU (x265)** für maximale Bildgenauigkeit und zur Vermeidung von Qualitätsverlusten und Artefakten.
+  * **Hohe Auflösung (1080p/4K):** Auslagerung an **Intel QuickSync (GPU)** für ein besonders schnelles und energieeffizientes H.265-Transcoding.
+* **Automatisierte Flow-Pipeline:** Greift Rohdateien aus dem `/watch_folder` ab, prüft Codec/Bitrate/Auflösung, transkodiert selektiv und verschiebt die fertigen Medien direkt in die Jellyfin-Mediathek.
 
 Automatisierter Node-Workflow: Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
