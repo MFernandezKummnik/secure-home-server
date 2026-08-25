@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  tdarr:
+    container_name: tdarr
+    image: ghcr.io/haveagreatdate/tdarr:latest
+    restart: unless-stopped
+    ports:
+      - 8265:8265 # Web UI
+      - 8266:8266 # Server Port
+    environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Berlin
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - inContainer=true
+      - nodeID=InternalNode
+    devices:
+      # Intel QuickSync Hardware Transcoding (i3-12100 UHD 730)
+      - /dev/dri:/dev/dri
+    volumes:
+      - /mnt/user/appdata/tdarr/server:/app/server
+      - /mnt/user/appdata/tdarr/configs:/app/configs
+      - /mnt/user/appdata/tdarr/logs:/app/logs
+      - /mnt/user/Media:/media
+      - /mnt/cache/transcode_cache:/temp # NVMe Cache für schnelle E/A-Performance
