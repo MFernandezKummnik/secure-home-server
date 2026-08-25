@@ -26,4 +26,5 @@ services:
       - /mnt/user/appdata/tdarr/configs:/app/configs
       - /mnt/user/appdata/tdarr/logs:/app/logs
       - /mnt/user/Media:/media
-      - /mnt/cache/transcode_cache:/temp # NVMe Cache für schnelle E/A-Performance
+      - /mnt/cache/transcode_cache/watch_folder:/watch_folder # Input directory for Tdarr Flow
+      - /mnt/cache/transcode_cache:/temp # NVMe Cache for temporary transcode files
