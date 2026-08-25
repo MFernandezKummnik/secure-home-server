@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  makemkv:
+    image: jlesage/makemkv:latest
+    container_name: makemkv
+    environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Berlin
+      - AUTO_DISC_RIP=1
+    devices:
+      # Drive 1: LG BU40N (Blu-ray / LibreDrive)
+      - /dev/sr0:/dev/sr0
+      - /dev/sg0:/dev/sg0
+      # Drive 2: Origbele Drive (DVD)
+      - /dev/sr1:/dev/sr1
+      - /dev/sg1:/dev/sg1
+      # Drive 3: Legacy PC Drive (CD)
+      - /dev/sr2:/dev/sr2
+      - /dev/sg2:/dev/sg2
+    volumes:
+      - /mnt/user/appdata/makemkv:/config
+      - /mnt/cache/transcode_cache/watch_folder:/output # Direct output to Tdarr Watch Folder
+    ports:
+      - 5800:5800
+    restart: unless-stopped
