@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+     environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Berlin
+      - JELLYFIN_PublishedServerUrl=http://<YOUR_SERVER_IP>:8096 # e.g. http://192.168.x.x:8096
+    devices:
+      # Intel QuickSync Hardware Transcoding (i3-12100 UHD 730)
+      - /dev/dri:/dev/dri
+    volumes:
+      - /mnt/user/appdata/jellyfin:/config
+      - /mnt/user/Media/Movies:/data/filme
+      - /mnt/user/Media/TV:/data/serien
+    ports:
+      - 8096:8096
+      - 8920:8920 # Optional HTTPS
+    restart: unless-stopped
