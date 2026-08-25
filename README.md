@@ -12,10 +12,10 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 
 ## 1. Why a Home Server of My Own? (Purpose & Motivation Matrix)
 
-* **Complete Data Sovereignty & Privacy:** Replacing commercial cloud providers. His confidential data, documents, and notes remain physically on his own storage devices - without tracking, data analysis, or third-party access rights.
+* **Complete Data Sovereignty & Privacy:** Replacing commercial cloud providers. My confidential data, documents, and notes remain physically on my own storage devices - without tracking, data analysis, or third-party access rights.
 * **Independence from Streaming Platforms:** No dependency on subscription models, price increases, ads, geoblocking, or content disappearing due to licensing reasons.
 * **Focus & Mindful Media Consumption:** Self-hosted media libraries free of recommendation algorithms, scroll spirals, and advertising interruptions.
-* **Digitization & Long-Term Archiving:** Losslessly digitizing, organizing, and permanently preserving physical media (e.g., his own CDs, DVDs, textbooks).
+* **Digitization & Long-Term Archiving:** Losslessly digitizing, organizing, and permanently preserving physical media (e.g., my own CDs, DVDs, textbooks).
 * **Centralization of University Documents:** An organized, fail-safe place for all lecture materials, notes, and scripts - accessible from any device.
 * **Financial Control & Sustainability (FinOps):** Avoiding recurring monthly cloud subscriptions in favor of a one-time, energy-efficient hardware investment.
 * **Hands-On IT Lab:** Deepening practical knowledge of Linux system administration, container virtualization, storage management, and IT security well beyond theoretical coursework.
