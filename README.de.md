@@ -12,7 +12,7 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 
 ## 1. Warum ein eigener Heimserver? (Zweck & Motivationsmatrix)
 
-* **Vollständige Datensouveränität & Datenschutz:** Ablösung kommerzieller Cloud-Anbieter. Seine vertraulichen Daten, Dokumente und Notizen verbleiben physisch auf eigenen Datenträgern - ohne Tracking, Datenanalyse oder Mitleserechte durch Dritte.
+* **Vollständige Datensouveränität & Datenschutz:** Ablösung kommerzieller Cloud-Anbieter. Meine vertraulichen Daten, Dokumente und Notizen verbleiben physisch auf eigenen Datenträgern - ohne Tracking, Datenanalyse oder Mitleserechte durch Dritte.
 * **Unabhängigkeit von Streaming-Plattformen:** Keine Abhängigkeit von Abo-Modellen, Preiserhöhungen, Werbeeinblendungen, Geoblocking oder verschwindenden Inhalten aus Lizenzgründen.
 * **Fokus & bewusster Medienkonsum:** Selbstgehostete Mediatheken frei von Empfehlungs-Algorithmen, Scroll-Spiralen und Werbeunterbrechungen.
 * **Digitalisierung & Langzeitarchivierung:** Physische Medien (z. B. eigene CDs, DVDs, Fachbücher) verlustfrei digitalisieren, strukturieren und dauerhaft sichern.
