@@ -52,7 +52,7 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 | | Jellyfin   | Navidrome     | Tdarr Engine     | n8n           | |
 | | (Video)    | (Hi-Fi Music) | (Transcoding)    | (Automation)  | |
 | +------------+---------------+------------------+---------------+ |
-| | Administrative Tools, Syncthing & VPN                         | |
+| | Administrative Tools, Syncthing & Tailscale Mesh-VPN          | |
 +---------------------------------------+---------------------------+
                                         | (Controlled I/O access)
                                         v
