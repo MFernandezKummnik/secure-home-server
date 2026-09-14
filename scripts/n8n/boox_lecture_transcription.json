@@ -1,0 +1,169 @@
+{
+  "name": "Onyx Boox Lecture Transcription & Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -672,
+        -16
+      ],
+      "id": "9db5196b-2259-4edc-a325-4232f511e926",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://faster-whisper:9000/asr?task=transcribe&language=de&output=text&vad_filter=false&encode=true",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "audio_file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        -16
+      ],
+      "id": "08fc08eb-8b34-4add-a159-66685439b1be",
+      "name": "Whisper Transkribieren"
+    },
+    {
+      "parameters": {
+        "jsCode": "const { execSync } = require('child_process');\nconst fs = require('fs');\n\n// 1. Pfad aus JSON suchen oder temporär aus Binary schreiben\nlet inputPath = $json.path || $json.filePath || $json.file;\nconst outputPath = '/tmp/converted.wav';\nconst tempInputPath = '/tmp/input_audio_temp';\n\n// Falls kein Pfad im JSON liegt, schreiben wir den Binary-Buffer kurz auf Disk\nif (!inputPath && typeof $binary !== 'undefined' && $binary && $binary.data) {\n  const binaryData = Buffer.from($binary.data.data, 'base64');\n  fs.writeFileSync(tempInputPath, binaryData);\n  inputPath = tempInputPath;\n}\n\nif (!inputPath) {\n  throw new Error(\"Kein Dateipfad oder Binary-Inhalt im vorherigen Node gefunden!\");\n}\n\n// 2. FFmpeg-Pfad sicherstellen\nlet ffmpegBin = 'ffmpeg';\nif (fs.existsSync('/usr/bin/ffmpeg')) {\n  ffmpegBin = '/usr/bin/ffmpeg';\n} else if (fs.existsSync('/usr/local/bin/ffmpeg')) {\n  ffmpegBin = '/usr/local/bin/ffmpeg';\n} else if (fs.existsSync('/tmp/ffmpeg')) {\n  ffmpegBin = '/tmp/ffmpeg';\n} else {\n  execSync('wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -O /tmp/ffmpeg.tar.xz && tar -xf /tmp/ffmpeg.tar.xz -C /tmp/ && cp /tmp/ffmpeg-*-static/ffmpeg /tmp/ffmpeg && chmod +x /tmp/ffmpeg && rm -rf /tmp/ffmpeg*static* /tmp/ffmpeg.tar.xz');\n  ffmpegBin = '/tmp/ffmpeg';\n}\n\n// Konvertierung ausführen\nexecSync(`${ffmpegBin} -y -i \"${inputPath}\" -ar 16000 -ac 1 -c:a pcm_s16le ${outputPath}`);\n\n// 3. Konvertierte WAV-Datei als Binary bereitstellen\nconst wavBuffer = fs.readFileSync(outputPath);\n\n// Aufräumen in /tmp\nif (fs.existsSync(tempInputPath)) fs.unlinkSync(tempInputPath);\nif (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);\n\nreturn [{\n  json: {\n    converted: true,\n    originalPath: inputPath\n  },\n  binary: {\n    data: {\n      data: wavBuffer.toString('base64'),\n      mimeType: 'audio/wav',\n      fileName: 'converted.wav'\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        32
+      ],
+      "id": "af4770ff-2aae-472b-acf7-49b6b8a98ae8",
+      "name": "UmwandlungMp3_Wav"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst path = require('path');\n\nconst sourceFolder = '/data/boox_sync/inbound';\n\nif (!fs.existsSync(sourceFolder)) {\n  // Wenn nicht mal der Ordner existiert, stumm abbrechen\n  return [];\n}\n\n// Neueste Datei (WAV, MP3 oder M4A) suchen\nconst files = fs.readdirSync(sourceFolder)\n  .filter(f => /\\.(wav|mp3|m4a)$/i.test(f))\n  .map(f => ({ name: f, time: fs.statSync(path.join(sourceFolder, f)).mtime.getTime() }))\n  .sort((a, b) => b.time - a.time);\n\n// Wenn keine Audiodatei im Ordner liegt: Leeres Array zurückgeben\nif (files.length === 0) {\n  return [];\n}\n\nconst latestFilePath = path.join(sourceFolder, files[0].name);\n\nreturn [{\n  json: {\n    filePath: latestFilePath,\n    fileName: files[0].name\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        0
+      ],
+      "id": "3c93f0cb-a030-48b7-8d13-0a9a1f6fd26d",
+      "name": "Read from disk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst path = require('path');\n\n// 1. Pfad aus dem Read/Umwandlung-Node abfragen\nconst sourcePath = $('UmwandlungMp3_Wav').item.json.originalPath \n  || $('Read from disk').item.json.filePath \n  || $('Read from disk').item.json.path;\n\nif (!sourcePath) {\n  throw new Error(\"Kein Ursprungspfad für die Audiodatei gefunden!\");\n}\n\n// 2. Transkript-Text aus dem Whisper-Output holen\nconst transcript = $json?.data?.text || $json?.text || $json?.data || \"\";\n\n// 3. Modulname aus dem Dateinamen filtern (erstes Wort)\nconst fullFileName = path.basename(sourcePath, path.extname(sourcePath));\nconst moduleName = fullFileName.split(/[\\s_]+/)[0];\n\n// 4. Zielpfad im Modul-Unterordner erstellen\nconst targetDir = `/data/lectures/${moduleName}/transcripts`;\nif (!fs.existsSync(targetDir)) {\n  fs.mkdirSync(targetDir, { recursive: true });\n}\n\nconst txtPath = path.join(targetDir, `${fullFileName}.txt`);\n\n// 5. Transkript abspeichern\nfs.writeFileSync(txtPath, transcript, 'utf8');\n\n// Prüfen ob Datei gespeichert wurde\nconst isSaved = fs.existsSync(txtPath) && fs.statSync(txtPath).size > 0;\n\nreturn [{\n  json: {\n    success: isSaved,\n    savedTo: txtPath,\n    originalAudio: sourcePath\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -16
+      ],
+      "id": "1e732e70-4179-4c05-bcdc-43e6023bd85d",
+      "name": "Outputtranskript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst path = require('path');\n\n// 1. Ursprünglichen Dateipfad aus den vorherigen Nodes holen\nconst originalPath = $('Outputtranskript').item.json.originalAudio \n  || $('UmwandlungMp3_Wav').item.json.originalPath \n  || $('Read from disk').item.json.filePath;\n\nif (!originalPath) {\n  throw new Error(\"Kein ursprünglicher Audio-Pfad zum Verschieben gefunden!\");\n}\n\n// 2. Ziel-Archivordner definieren\nconst archiveFolder = '/data/archive/audio';\n\n// Ordner erstellen, falls noch nicht vorhanden\nif (!fs.existsSync(archiveFolder)) {\n  fs.mkdirSync(archiveFolder, { recursive: true });\n}\n\n// 3. Datei ins Archiv kopieren und am Quellort löschen\nif (fs.existsSync(originalPath)) {\n  const fileName = path.basename(originalPath);\n  const targetPath = path.join(archiveFolder, fileName);\n  \n  // Kopieren über Mount-Grenzen hinweg\n  fs.copyFileSync(originalPath, targetPath);\n  \n  // Quelldatei aus dem Sync-Ordner löschen -> triggert Löschen auf dem Boox via Syncthing\n  fs.unlinkSync(originalPath);\n\n  return [{\n    json: {\n      success: true,\n      archivedTo: targetPath,\n      message: \"Audio-Datei erfolgreich ins Archiv verschoben.\"\n    }\n  }];\n} else {\n  return [{\n    json: {\n      success: false,\n      message: `Datei unter ${originalPath} existiert nicht mehr.`\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        0
+      ],
+      "id": "18467a0e-0766-42a0-984a-6933469335ce",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Whisper Transkribieren": {
+      "main": [
+        [
+          {
+            "node": "Outputtranskript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read from disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UmwandlungMp3_Wav": {
+      "main": [
+        [
+          {
+            "node": "Whisper Transkribieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read from disk": {
+      "main": [
+        [
+          {
+            "node": "UmwandlungMp3_Wav",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outputtranskript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": []
+}
