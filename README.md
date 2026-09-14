@@ -59,12 +59,12 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 +----------------------------------------------------------------------------+
 |                              STORAGE TIERING                               |
 |  +--------------------------+   +-----------------------------------+      |
-|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (10 TB + 10 TB)      |     |
-|  |  Docker Appdata &        |-->|  Media Library & Long-Term         |     |
-|  |  Inbound Files           |   |  Archive (XOR protection)          |     |
+|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (10 TB + 10 TB)     |      |
+|  |  Docker Appdata &        |-->|  Media Library & Long-Term        |      |
+|  |  Inbound Files           |   |  Archive (XOR protection)         |      |
 |  +--------------------------+   +-----------------------------------+      |
 |  +------------------------------------------------------------------+      |
-|  |  UNASSIGNED DEVICE: 250 GB HDD (Active University Data)           |     |
+|  |  UNASSIGNED DEVICE: 250 GB HDD (Active University Data)          |      |
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
