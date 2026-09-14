@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  faster-whisper:
+    image: fedirz/faster-whisper-server:latest-cuda
+    container_name: faster-whisper
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - WHISPER_MODEL=medium # Modelle: tiny, base, small, medium, large-v3
+      - WHISPER_DEVICE=cuda
+      - WHISPER_COMPUTE_TYPE=float16
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/user/appdata/faster-whisper/models:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - homelab_net
+
+networks:
+  homelab_net:
+    external: true
