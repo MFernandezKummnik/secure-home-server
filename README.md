@@ -27,6 +27,7 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 | Component | Exact Model | Architectural Reasoning & Advantage |
 | :--- | :--- | :--- |
 | **CPU** | Intel Core i3-12100 | 4C/8T. UHD 730 iGPU with **Intel QuickSync** for power-efficient 4K hardware transcoding in Jellyfin; strong single-core performance & AVX2 instruction set. |
+| **GPU (AI / Acceleration)** | Nvidia GeForce GTX 1070 (8 GB) | Cost-effective budget choice for local LLM inference (Ollama) and hardware acceleration for AI workloads (Faster-Whisper audio transcription) via GPU passthrough. |
 | **Motherboard** | Gigabyte B760M DS3H DDR4 GEN5 | Micro-ATX with support for deep **C-states (C8/C10)** under Linux (minimal idle power draw); native 2.5 GbE LAN port for fast data transfer. |
 | **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-channel (1.2V JEDEC standard) for 24/7 stability; provides ample headroom for parallel Docker containers. |
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB NVMe for maximum I/O performance for Docker containers, appdata databases, and the Unraid inbound cache. |
