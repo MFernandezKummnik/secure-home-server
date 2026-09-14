@@ -45,13 +45,14 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 The system uses **Unraid OS** as its host operating system (stateless boot concept from RAM) and runs all applications process-isolated in **Docker containers**.
 
 ```text
-+----------------------------------------------------------------------------+
-|                          DOCKER APPLICATION STACK                          |
-| +-----------------+-----------------+-----------------+------------------+ |
-| | Jellyfin        | Navidrome       | Tdarr Engine    | Administrative   | |
-| | (Video/Movie)   | (Hi-Fi Music)   | (Transcoding)   | Tools & VPN      | |
-| +-----------------+-----------------+-----------------+------------------+ |
-+-------------------------------------+--------------------------------------+
++-------------------------------------------------------------------+
+|                     DOCKER APPLICATION STACK                      |
+| +------------+---------------+------------------+---------------+ |
+| | Jellyfin   | Navidrome     | Tdarr Engine     | n8n           | |
+| | (Video)    | (Hi-Fi Music) | (Transcoding)    | (Automation)  | |
+| +------------+---------------+------------------+---------------+ |
+| | Administrative Tools, Syncthing & VPN                         | |
++---------------------------------------+---------------------------+
                                         | (Controlled I/O access)
                                         v
 +----------------------------------------------------------------------------+
@@ -84,10 +85,16 @@ Universal Interface: Uses the Subsonic API for seamless integration with mobile 
 
 Automated Node Workflow: Drastically reduces file sizes while maintaining visual quality, saving storage space on the 10 TB HDDs and easing network bandwidth.
 
-## 4. Roadmap & Planned Extensions
-- [ ] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
+### 3.4 Automated E-Ink Workflow & AI Audio Processing (Syncthing, n8n & Faster-Whisper)
+* **Seamless Document Sync:** Bidirectional background synchronization between the Onyx Boox Go 10.3 tablet and the Unraid server using **Syncthing**, ensuring lecture materials and handwritten notes are instantly backed up and accessible.
+* **Automated Audio Transcription Pipeline:** 
+  * Audio recordings (e.g., lecture recordings) uploaded from the tablet are detected automatically via folder watch triggers.
+  * **n8n Workflow Automation:** Orchestrates the processing pipeline by fetching new audio files, passing them to a self-hosted **Faster-Whisper** container for localized speech-to-text transcription, and saving the generated transcripts alongside the original notes without cloud intervention.
 
-- [ ] Local AI Transcription: Integrating a self-contained Docker container (faster-whisper) for locally processing lecture audio.
+## 4. Roadmap & Planned Extensions
+- [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
+
+- [x] Local AI Transcription: Integrating a self-contained Docker container (faster-whisper) for locally processing lecture audio.
 
 - [ ] Extended Scripting Automation: Creating custom Bash and watchdog scripts for automated backups and folder monitoring.
 
@@ -98,7 +105,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
 
-* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, and administrative tools.
+* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper, and administrative tools.
 
 * **[`scripts/`](scripts/):** (In development) Custom scripts for automation, backup routines, and file management.
 
