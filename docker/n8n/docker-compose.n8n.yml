@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=192.168.178.x # Ersetze dies mit deiner Unraid-IP oder Subdomäne
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://192.168.178.x:5678/ # Wichtig für externe Triggers/Webhooks
+      - GENERIC_TIMEZONE=Europe/Berlin
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/user/appdata/n8n:/home/node/.n8n
+      # Optional: Zugriff auf geteilte Unraid-Pfade für Audio-/Mitschriften-Verarbeitung
+      - /mnt/user/documents/boox_sync:/data/boox_sync
+    networks:
+      - homelab_net
+
+networks:
+  homelab_net:
+    external: true
