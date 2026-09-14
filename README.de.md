@@ -27,6 +27,7 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 | Komponente | Exaktes Modell | Architektonischer Grund & Vorteil |
 | :--- | :--- | :--- |
 | **CPU** | Intel Core i3-12100 | 4C/8T. UHD 730 iGPU mit **Intel QuickSync** für stromsparendes 4K-Hardware-Transcoding in Jellyfin; hohe Single-Core-Leistung & AVX2-Befehlssatz. |
+| **GPU (KI / Beschleunigung)** | Nvidia GeForce GTX 1070 (8 GB) | Kosteneffiziente Budget-Wahl für lokale LLM-Inferenz (Ollama) und GPU-Beschleunigung von KI-Workflows (Faster-Whisper Sprach-zu-Text). |
 | **Mainboard** | Gigabyte B760M DS3H DDR4 GEN5 | Micro-ATX mit Unterstützung für tiefe **C-States (C8/C10)** unter Linux (minimaler Idle-Verbrauch); nativer 2.5 GbE LAN-Port für schnelle Datenübertragung. |
 | **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-Channel (1.2V JEDEC-Standard) für 24/7-Stabilität; bietet ausreichend Puffer für parallele Docker-Container. |
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB-NVMe für maximale I/O-Performance bei Docker-Containern, Appdata-Datenbanken und dem Unraid Inbound-Cache. |
@@ -45,24 +46,25 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept aus dem Arbeitsspeicher) und betreibt alle Anwendungen prozessisoliert in **Docker-Containern**.
 
 ```text
-+----------------------------------------------------------------------------+
-|                          DOCKER APPLICATION STACK                          |
-| +-----------------+-----------------+-----------------+------------------+ |
-| | Jellyfin        | Navidrome       | Tdarr Engine    | Administrative   | |
-| | (Video/Movie)   | (Hi-Fi Music)   | (Transcoding)   | Tools & VPN      | |
-| +-----------------+-----------------+-----------------+------------------+ |
-+-------------------------------------+--------------------------------------+
++-------------------------------------------------------------------+
+|                     DOCKER APPLICATION STACK                      |
+| +------------+---------------+------------------+---------------+ |
+| | Jellyfin   | Navidrome     | Tdarr Engine     | n8n           | |
+| | (Video)    | (Hi-Fi Musik) | (Transcoding)    | (Automation)  | |
+| +------------+---------------+------------------+---------------+ |
+| | Administrative Tools, Syncthing & Tailscale Mesh-VPN          | |
++---------------------------------------+---------------------------+
                                         | (Gesteuerter I/O-Zugriff)
                                         v
 +----------------------------------------------------------------------------+
 |                              STORAGE TIERING                               |
 |  +--------------------------+   +-----------------------------------+      |
-|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (10 TB + 10 TB)      |     |
-|  |  Docker Appdata &        |-->|  Mediathek & Langzeit-             |     |
-|  |  Inbound-Dateien         |   |  Archiv (XOR-Schutz)               |     |
+|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (10 TB + 10 TB)     |      |
+|  |  Docker Appdata &        |-->|  Mediathek & Langzeit-            |      |
+|  |  Inbound-Dateien         |   |  Archiv (XOR-Schutz)              |      |
 |  +--------------------------+   +-----------------------------------+      |
 |  +------------------------------------------------------------------+      |
-|  |  UNASSIGNED DEVICE: 250 GB HDD (Aktive Uni-Daten)                 |     |
+|  |  UNASSIGNED DEVICE: 250 GB HDD (Aktive Uni-Daten)                |      |
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
@@ -84,10 +86,16 @@ Universelle Schnittstelle: Nutzt die Subsonic-API zur nahtlosen Anbindung mobile
 
 Automatisierter Node-Workflow: Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
-## 4. Roadmap & Geplante Erweiterungen
-- [ ] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
+### 3.4 Automatisierter E-Ink Workflow & KI-Audioverarbeitung (Syncthing, n8n & Faster-Whisper)
+* **Nahtlose Dokumenten-Synchronisation:** Bi-direktionale Hintergrund-Synchronisation zwischen dem Onyx Boox Go 10.3 Tablet und dem Unraid-Server mittels **Syncthing** über eine verschlüsselte **Tailscale-VPN**-Verbindung (ermöglicht sicheren Remote-Zugriff aus dem Campusnetz der HTWG Konstanz).
+* **Automatisierte Audio-Transkriptions-Pipeline:** 
+  * Vom Tablet hochgeladene Audioaufnahmen (z. B. Vorlesungsmitschnitte) werden automatisch erkannt.
+  * **n8n Workflow-Automatisierung:** Steuert die Pipeline, holt neue Audiodateien ab, übergibt sie an einen lokal gehosteten **Faster-Whisper**-Container (GPU-beschleunigt via Nvidia GTX 1070) zur Speech-to-Text-Transkription und speichert das Ergebnis direkt im passenden Modulordner.
 
-- [ ] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
+## 4. Roadmap & Geplante Erweiterungen
+- [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
+
+- [x] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
 
 - [ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
 
@@ -98,9 +106,9 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr und Administrative Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper und Admin-Tools.
 
-* **[`scripts/`](scripts/):** (In Entwicklung) Eigene Skripte für Automatisierung, Backup-Routinen und File-Management.
+* **[`scripts/`](scripts/):** Eigene Automatisierungsskripte und Pipelines, inklusive des **n8n E-Ink Transkriptions-Workflows** (`scripts/n8n/`).
 
 ---
 
