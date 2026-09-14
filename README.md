@@ -108,7 +108,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper, and administrative tools.
 
-* **[`scripts/`](scripts/):** (In development) Custom scripts for automation, backup routines, and file management.
+* **[`scripts/`](scripts/):** Custom scripts and automated pipelines, including the **n8n E-Ink transcription workflow** (`scripts/n8n/`).
 
 ---
 
