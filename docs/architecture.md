@@ -74,6 +74,7 @@ The ingestion pipeline uses a dedicated three-drive physical setup to extract me
 This section documents the explicit architectural trade-offs and alternative components evaluated during the hardware selection process.
 
 ### 4.1 CPU: Intel Core i3-12100 vs. Alternatives
+
 * **Evaluated Alternatives:** AMD Ryzen 5 4600G / 5600G, Older Intel Xeons (E3/E5 series), Intel N100 / N305.
 * **Decision:** Selected the **Intel Core i3-12100**.
 * **Rationale & Trade-off:**
@@ -82,6 +83,7 @@ This section documents the explicit architectural trade-offs and alternative com
   * **vs. Intel N100 (SFF/Mini-PC):** While the N100 boasts minimal power consumption, it lacks PCIe lane density and SATA connectivity for a multi-drive HDD array and optical drive passthrough.
 
 ### 4.2 Storage & Array Layout
+
 * **Evaluated Alternatives:** Standard RAID 1/5 (ZFS / Hardware RAID), Unraid Parity.
 * **Decision:** Selected **Unraid Array with dedicated Cache Tier**.
 * **Rationale & Trade-off:**
