@@ -3,7 +3,7 @@
 [ **English** ](README.md) | [ Deutsch ](README.de.md)
 
 [![OS: Linux / Unraid](https://img.shields.io/badge/OS-Unraid_Linux-orange.svg)](https://unraid.net/)
-[![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust_%7C_LUKS-emerald.svg)]()
+[![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust-emerald.svg)]()
 [![Stack: Docker](https://img.shields.io/badge/Stack-Docker_%7C_Jellyfin_%7C_Tdarr-brightgreen.svg)]()
 
 Repository documenting my self-built, fully cloud-free home server. The system serves as central infrastructure for data backup, media management, university organization, and automated background workflows following the principle of "Security by Design."
@@ -33,7 +33,7 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB NVMe for maximum I/O performance for Docker containers, appdata databases, and the Unraid inbound cache. |
 | **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3.5", CMR) | Parity-protected Unraid storage pool (**1x parity + 1x data**). CMR technology prevents performance drops; XOR parity protects against drive failure. |
 | **HDD (University)** | 1x 250 GB Seagate DB35.4 HDD | **Unassigned device** (outside the parity array) for active university data. Protects the large 10 TB drives from constant spin-ups. |
-| **Optical Drive**| LG HLDS BU40N Ultra Slim UHD Burner | Internal slim drive via USB adapter; LibreDrive compatibility for lossless reading of his own media. *Note:* Reading is strictly within the bounds of applicable copyright law (§ 95a UrhG, German copyright act); no circumvention of effective copy-protection mechanisms. |
+| **Optical Drive**| LG HLDS BU40N Ultra Slim UHD Burner | Slim drive connected via USB adapter; LibreDrive compatibility for lossless reading of my own media. *Note:* Reading is strictly within the bounds of applicable copyright law (§ 95a UrhG, German copyright act); no circumvention of effective copy-protection mechanisms. |
 | **Boot Media** | 32 GB Samsung BAR Plus (USB 3.1) | Write-protected Unraid boot stick; sturdy metal housing for optimal heat dissipation in 24/7 operation. |
 | **CPU Cooler** | Thermalright Assassin X 120 SE | Tower cooler with a quiet 120mm PWM fan; prevents thermal throttling under sustained full CPU load. |
 | **Power Supply** | be quiet! System Power 11 450W (80+ Bronze) | Highly efficient power supply with native C6/C7-state support for minimal power loss under low idle load. |
@@ -68,40 +68,47 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
-## 3.1 Video Streaming & Home Theater (Jellyfin)
-Direct Play & Hardware Acceleration: A pure, open-source media server setup without external pass-through servers. Uses the Intel UHD 730 graphics unit (QuickSync) for lag-free hardware transcoding when needed.
 
-Platform-Independent: Streams uncompressed content directly to devices on the home network (e.g., Apple TV 4K) as well as to mobile clients on the go.
+### 3.1 Video Streaming & Home Theater (Jellyfin)
 
-## 3.2 Hi-Fi Music Library (Navidrome)
-High-Performance Streaming: A resource-efficient music server written in Go, for his own CD rips (FLAC/MP3).
+**Direct Play & Hardware Acceleration:** A pure, open-source media server setup without external pass-through servers. Uses the Intel UHD 730 graphics unit (QuickSync) for lag-free hardware transcoding when needed.
 
-Universal Interface: Uses the Subsonic API for seamless integration with mobile apps (iPhone/Android) in the car or on the go, without relying on third-party subscription services.
+**Platform-Independent:** Streams uncompressed content directly to devices on the home network (e.g., Apple TV 4K) as well as to mobile clients on the go.
 
-## ### 3.3 Automated Media Optimization (Tdarr Pipeline)
+### 3.2 Hi-Fi Music Library (Navidrome)
+
+**High-Performance Streaming:** A resource-efficient music server written in Go, for my own CD rips (FLAC/MP3).
+
+**Universal Interface:** Uses the Subsonic API for seamless integration with mobile apps (iPhone/Android) in the car or on the go, without relying on third-party subscription services.
+
+### 3.3 Automated Media Optimization (Tdarr Pipeline)
+
 * **Resolution-Aware Transcoding Logic:** 
   * **Low-Resolution Content (SD/DVD):** Processed via **CPU (x265)** to maintain maximum visual accuracy, preventing block artifacts and quality degradation.
   * **High-Resolution Content (1080p/4K):** Offloaded to **Intel QuickSync (GPU)** for high-throughput, energy-efficient H.265 transcoding.
 * **Automated Flow Pipeline:** Reads raw MKVs from `/watch_folder`, analyzes codec/bitrate/resolution, transcodes selectively, and automatically moves processed files to the final Jellyfin media library.
 
-Automated Node Workflow: Drastically reduces file sizes while maintaining visual quality, saving storage space on the 10 TB HDDs and easing network bandwidth.
+**Automated Node Workflow:** Drastically reduces file sizes while maintaining visual quality, saving storage space on the 10 TB HDDs and easing network bandwidth.
 
 ### 3.4 Automated E-Ink Workflow & AI Audio Processing (Syncthing, n8n & Faster-Whisper)
+
 * **Seamless Document Sync:** Bidirectional background synchronization between the Onyx Boox Go 10.3 tablet and the Unraid server using **Syncthing**, ensuring lecture materials and handwritten notes are instantly backed up and accessible.
 * **Automated Audio Transcription Pipeline:** 
   * Audio recordings (e.g., lecture recordings) uploaded from the tablet are detected automatically via folder watch triggers.
   * **n8n Workflow Automation:** Orchestrates the processing pipeline by fetching new audio files, passing them to a self-hosted **Faster-Whisper** container for localized speech-to-text transcription, and saving the generated transcripts alongside the original notes without cloud intervention.
 
 ## 4. Roadmap & Planned Extensions
+
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
 
 - [x] Local AI Transcription: Integrating a self-contained Docker container (faster-whisper) for locally processing lecture audio.
 
 - [ ] Extended Scripting Automation: Creating custom Bash and watchdog scripts for automated backups and folder monitoring.
 
-- [ ] Network Hardening: Comprehensive configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices.
+- [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository Structure
+
 The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
