@@ -18,7 +18,7 @@ To minimize the attack surface, local services are not exposed directly to the p
 
 ## 2. Storage Security & Data Privacy
 
-* **Data Separation (Academic Data):** University documents and personal files reside on a dedicated Unassigned Device drive (`/dev/disk/by-id/...`), logically separated from the media pool and outside the parity array.
+* **Data Protection (Academic Data):** University documents and personal files reside on the array data drives and are protected against the failure of a single drive by Unraid parity. Parity is redundancy, not a backup; a separate backup is planned.
 * **Read-Only Container Mounts:** Containers serving static content (e.g., Navidrome accessing music libraries) are mounted with read-only flags (`:ro`). This prevents potential container escape exploits or software bugs from modifying or encrypting media files.
 * **Least Privilege Execution:** All Docker containers run with non-root user/group mappings (`PUID=99`, `PGID=100`) to enforce strict permission boundaries on the host file system.
 
@@ -29,7 +29,8 @@ To minimize the attack surface, local services are not exposed directly to the p
 | Security Threat | Implemented Control / Defense Mechanism |
 | :--- | :--- |
 | **Unauthorized External Access** | Zero open WAN ports; mandatory encrypted WireGuard/Tailscale VPN tunnel. |
-| **Ransomware / Malicious Container Writes** | Immutable read-only mounts (`:ro`) for media assets; isolated storage tiers. |
+| **Ransomware / Malicious Container Writes** | Immutable read-only mounts (`:ro`) for media assets. A separate, versioned backup is planned. |
+| **Single Drive Failure** | Unraid XOR parity (1x 10 TB parity drive) allows recovery of one failed data drive. |
 | **Privilege Escalation** | Execution of containers under restricted non-root Unraid system accounts (`nobody:users`). |
 | **Data Leakage in Public Docs** | Zero-trust documentation standard: strict exclusion of internal IP addresses, MAC addresses, or credentials from public git repositories. |
 

@@ -6,7 +6,7 @@
 [![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust-emerald.svg)]()
 [![Stack: Docker](https://img.shields.io/badge/Stack-Docker_%7C_Jellyfin_%7C_Tdarr-brightgreen.svg)]()
 
-Repository documenting my self-built, fully cloud-free home server. The system serves as central infrastructure for data backup, media management, university organization, and automated background workflows following the principle of "Security by Design."
+Repository documenting my self-built, fully cloud-free home server. The system serves as central infrastructure for data storage with drive-failure protection, media management, university organization, and automated background workflows following the principle of "Security by Design."
 
 ---
 
@@ -16,7 +16,7 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 * **Independence from Streaming Platforms:** No dependency on subscription models, price increases, ads, geoblocking, or content disappearing due to licensing reasons.
 * **Focus & Mindful Media Consumption:** Self-hosted media libraries free of recommendation algorithms, scroll spirals, and advertising interruptions.
 * **Digitization & Long-Term Archiving:** Losslessly digitizing, organizing, and permanently preserving physical media (e.g., my own CDs, DVDs, textbooks).
-* **Centralization of University Documents:** An organized, fail-safe place for all lecture materials, notes, and scripts - accessible from any device.
+* **Centralization of University Documents:** An organized place, protected against single-drive failure (parity), for all lecture materials, notes, and scripts - accessible from any device.
 * **Financial Control & Sustainability (FinOps):** Avoiding recurring monthly cloud subscriptions in favor of a one-time, energy-efficient hardware investment.
 * **Hands-On IT Lab:** Deepening practical knowledge of Linux system administration, container virtualization, storage management, and IT security well beyond theoretical coursework.
 
@@ -32,7 +32,7 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 | **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-channel (1.2V JEDEC standard) for 24/7 stability; provides ample headroom for parallel Docker containers. |
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB NVMe for maximum I/O performance for Docker containers, appdata databases, and the Unraid inbound cache. |
 | **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3.5", CMR) | Parity-protected Unraid storage pool (**1x parity + 1x data**). CMR technology prevents performance drops; XOR parity protects against drive failure. |
-| **HDD (University)** | 1x 250 GB Seagate DB35.4 HDD | **Unassigned device** (outside the parity array) for active university data. Protects the large 10 TB drives from constant spin-ups. |
+| **HDDs (Array, reused)** | 1x 500 GB (from a 2012 laptop) + 1x 350 GB (from an older desktop PC) | Additional data drives in the same array, added from spare hardware. Each data drive has its own file system; the parity drive (10 TB) is at least as large as the largest data drive. Data, including university files, is spread across the data drives (High-water allocation). |
 | **Optical Drive**| LG HLDS BU40N Ultra Slim UHD Burner | Slim drive connected via USB adapter; LibreDrive compatibility for lossless reading of my own media. *Note:* Reading is strictly within the bounds of applicable copyright law (§ 95a UrhG, German copyright act); no circumvention of effective copy-protection mechanisms. |
 | **Boot Media** | 32 GB Samsung BAR Plus (USB 3.1) | Write-protected Unraid boot stick; sturdy metal housing for optimal heat dissipation in 24/7 operation. |
 | **CPU Cooler** | Thermalright Assassin X 120 SE | Tower cooler with a quiet 120mm PWM fan; prevents thermal throttling under sustained full CPU load. |
@@ -59,13 +59,10 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 +----------------------------------------------------------------------------+
 |                              STORAGE TIERING                               |
 |  +--------------------------+   +-----------------------------------+      |
-|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (10 TB + 10 TB)     |      |
-|  |  Docker Appdata &        |-->|  Media Library & Long-Term        |      |
-|  |  Inbound Files           |   |  Archive (XOR protection)         |      |
+|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (4 HDDs)            |      |
+|  |  Docker Appdata &        |-->|  Parity: 10 TB                    |      |
+|  |  Inbound Files           |   |  Data: 10 TB, 500 GB, 350 GB      |      |
 |  +--------------------------+   +-----------------------------------+      |
-|  +------------------------------------------------------------------+      |
-|  |  UNASSIGNED DEVICE: 250 GB HDD (Active University Data)          |      |
-|  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
 

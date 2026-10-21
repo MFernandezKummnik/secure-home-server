@@ -6,7 +6,7 @@
 [![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust-emerald.svg)]()
 [![Stack: Docker](https://img.shields.io/badge/Stack-Docker_%7C_Jellyfin_%7C_Tdarr-brightgreen.svg)]()
 
-Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heimservers. Das System dient als zentrale Infrastruktur für Datensicherung, Medien-Management, Hochschul-Organisation und automatisierte Hintergrund-Workflows nach dem Prinzip "Security by Design".
+Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heimservers. Das System dient als zentrale Infrastruktur für Datenhaltung mit Ausfallschutz, Medien-Management, Hochschul-Organisation und automatisierte Hintergrund-Workflows nach dem Prinzip "Security by Design".
 
 ---
 
@@ -16,7 +16,7 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 * **Unabhängigkeit von Streaming-Plattformen:** Keine Abhängigkeit von Abo-Modellen, Preiserhöhungen, Werbeeinblendungen, Geoblocking oder verschwindenden Inhalten aus Lizenzgründen.
 * **Fokus & bewusster Medienkonsum:** Selbstgehostete Mediatheken frei von Empfehlungs-Algorithmen, Scroll-Spiralen und Werbeunterbrechungen.
 * **Digitalisierung & Langzeitarchivierung:** Physische Medien (z. B. eigene CDs, DVDs, Fachbücher) verlustfrei digitalisieren, strukturieren und dauerhaft sichern.
-* **Zentralisierung von Hochschul-Dokumenten:** Ein organisierter, ausfallsicherer Ort für alle Vorlesungsunterlagen, Mitschriften und Skripte - von jedem Gerät aus erreichbar.
+* **Zentralisierung von Hochschul-Dokumenten:** Ein organisierter, gegen den Ausfall einer Platte geschützter Ort (Parity) für alle Vorlesungsunterlagen, Mitschriften und Skripte - von jedem Gerät aus erreichbar.
 * **Finanzielle Kontrolle & Nachhaltigkeit (FinOps):** Vermeidung wiederkehrender monatlicher Cloud-Abonnements zugunsten einer einmaligen, energieeffizienten Hardware-Investition.
 * **Praxisnahes IT-Labor:** Fundierte Vertiefung von Kenntnissen in Linux-Systemadministration, Container-Virtualisierung, Speichermanagement und IT-Sicherheit weit über das theoretische Studium hinaus.
 
@@ -32,7 +32,7 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 | **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-Channel (1.2V JEDEC-Standard) für 24/7-Stabilität; bietet ausreichend Puffer für parallele Docker-Container. |
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB-NVMe für maximale I/O-Performance bei Docker-Containern, Appdata-Datenbanken und dem Unraid Inbound-Cache. |
 | **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3,5", CMR) | Paritätsgeschützter Unraid-Storage-Pool (**1x Parity + 1x Data**). CMR-Technologie verhindert Leistungseinbrüche; XOR-Parität schützt vor Festplattenausfall. |
-| **HDD (Uni)** | 1x 250 GB Seagate DB35.4 HDD | **Unassigned Device** (außerhalb des Parity-Arrays) für aktive Hochschul-Daten. Schützt die großen 10-TB-Festplatten vor ständigen Spin-ups. |
+| **HDDs (Array, wiederverwendet)** | 1x 500 GB (aus einem Laptop von 2012) + 1x 350 GB (aus einem älteren Desktop-PC) | Zusätzliche Data-Platten im selben Array, aus vorhandener Hardware ergänzt. Jede Data-Platte hat ein eigenes Dateisystem; die Parity-Platte (10 TB) ist mindestens so groß wie die größte Data-Platte. Daten, auch die Uni-Dateien, verteilen sich auf die Data-Platten (High-water-Zuteilung). |
 | **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Slim-Laufwerk, per USB-Adapter angeschlossen; LibreDrive-Kompatibilität zum verlustfreien Auslesen eigener Medien. *Hinweis:* Auslesen rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
 | **Bootmedium** | 32 GB Samsung BAR Plus (USB 3.1) | Schreibgeschützter Unraid-Boot-Stick; robustes Metallgehäuse für optimale Wärmeableitung im 24/7-Dauerbetrieb. |
 | **CPU-Kühler** | Thermalright Assassin X 120 SE | Tower-Kühler mit leisem 120mm PWM-Lüfter; verhindert Thermal Throttling bei dauerhafter CPU-Volllast. |
@@ -59,13 +59,10 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 +----------------------------------------------------------------------------+
 |                              STORAGE TIERING                               |
 |  +--------------------------+   +-----------------------------------+      |
-|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (10 TB + 10 TB)     |      |
-|  |  Docker Appdata &        |-->|  Mediathek & Langzeit-            |      |
-|  |  Inbound-Dateien         |   |  Archiv (XOR-Schutz)              |      |
+|  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (4 HDDs)            |      |
+|  |  Docker Appdata &        |-->|  Parity: 10 TB                    |      |
+|  |  Inbound Files           |   |  Data: 10 TB, 500 GB, 350 GB      |      |
 |  +--------------------------+   +-----------------------------------+      |
-|  +------------------------------------------------------------------+      |
-|  |  UNASSIGNED DEVICE: 250 GB HDD (Aktive Uni-Daten)                |      |
-|  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
 
