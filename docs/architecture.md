@@ -38,23 +38,15 @@ The system utilizes Unraid OS's hybrid storage architecture to balance parity pr
 +-------------------------------------------------------------------------+
 ```
 ---
-3. Optical Ingestion Pipeline (Multi-Drive)
+## 3. Optical Ingestion Pipeline (Multi-Drive)
+
 The ingestion pipeline uses a dedicated three-drive physical setup to extract media without cross-contaminating optical drive workloads or causing premature wear.
 
-LG HLDS BU40N Ultra Slim UHD Burner:
+* **LG HLDS BU40N Ultra Slim UHD Burner:** Connected via USB adapter, flashed with LibreDrive firmware. Dedicated exclusively to 4K UHD and standard Blu-ray discs.
+* **DVD Drive:** Dedicated exclusively to standard DVD extraction.
+* **Legacy PC Optical Drive:** Dedicated exclusively to Audio CD extraction.
 
-Connected via USB adapter, flashed with LibreDrive firmware.
-
-Dedicated exclusively to 4K UHD and standard Blu-ray discs.
-
-Origbele DVD Drive:
-
-Dedicated exclusively to standard DVD extraction.
-
-Legacy PC Optical Drive:
-
-Dedicated exclusively to Audio CD extraction.
-```
+```text
 [ Physical Media Inserted ]
           |
           v
