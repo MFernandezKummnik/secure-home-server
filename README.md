@@ -127,4 +127,4 @@ Student of Business Information Systems (HTWG Konstanz)
 
 **Focus Areas:** IT Security Architecture, System Administration & Cloud-Free Homelabs
 
-**Contact:** - [LinkedIn](https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | - [Email](mailto:mi451fer@htwg-konstanz.de)
+**Contact:** - [LinkedIn](https://www.linkedin.com/in/miguel-angel-fernandez-kummnik) | - [Email](fernandezkummnikm@gmail.de)
