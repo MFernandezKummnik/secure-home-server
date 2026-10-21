@@ -13,6 +13,7 @@ To minimize the attack surface, local services are not exposed directly to the p
 * **Access Control Lists (ACLs):** Tailscale ACL rules strictly segment endpoint access:
   * Mobile devices (iPhones, Apple TV) are restricted to media streaming ports (`8096`, `4533`).
   * Administrative access (SSH, Unraid Management UI) is limited to authenticated control devices.
+* **Application-Level Scoping (Syncthing):** The E-Ink tablet synchronizes exactly two shared folders via Syncthing; no other server data is shared with it.
 
 ---
 
