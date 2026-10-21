@@ -18,7 +18,7 @@ To minimize the attack surface, local services are not exposed directly to the p
 
 ## 2. Storage Security & Data Privacy
 
-* **Data Isolation (Air-Gapped Academic Data):** University documents and personal files reside on a dedicated Unassigned Device drive (`/dev/disk/by-id/...`), completely separated from the public media pool.
+* **Data Separation (Academic Data):** University documents and personal files reside on a dedicated Unassigned Device drive (`/dev/disk/by-id/...`), logically separated from the media pool and outside the parity array.
 * **Read-Only Container Mounts:** Containers serving static content (e.g., Navidrome accessing music libraries) are mounted with read-only flags (`:ro`). This prevents potential container escape exploits or software bugs from modifying or encrypting media files.
 * **Least Privilege Execution:** All Docker containers run with non-root user/group mappings (`PUID=99`, `PGID=100`) to enforce strict permission boundaries on the host file system.
 
@@ -33,11 +33,6 @@ To minimize the attack surface, local services are not exposed directly to the p
 | **Privilege Escalation** | Execution of containers under restricted non-root Unraid system accounts (`nobody:users`). |
 | **Data Leakage in Public Docs** | Zero-trust documentation standard: strict exclusion of internal IP addresses, MAC addresses, or credentials from public git repositories. |
 
----
-
-## 4. Legal Compliance & Ethical Standards
-
-* **Copyright Compliance (§ 95a UrhG):** Digital media extraction using MakeMKV and LibreDrive is conducted exclusively for private archiving and format shifting of legitimately owned physical media. No effective technological copy protection mechanisms are unlawfully bypassed.
 ---
 
 ## 4. Legal Compliance & Ethical Standards
