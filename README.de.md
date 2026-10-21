@@ -3,7 +3,7 @@
 [ English ](README.md) | [ **Deutsch** ](README.de.md)
 
 [![OS: Linux / Unraid](https://img.shields.io/badge/OS-Unraid_Linux-orange.svg)](https://unraid.net/)
-[![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust_%7C_LUKS-emerald.svg)]()
+[![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust-emerald.svg)]()
 [![Stack: Docker](https://img.shields.io/badge/Stack-Docker_%7C_Jellyfin_%7C_Tdarr-brightgreen.svg)]()
 
 Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heimservers. Das System dient als zentrale Infrastruktur für Datensicherung, Medien-Management, Hochschul-Organisation und automatisierte Hintergrund-Workflows nach dem Prinzip "Security by Design".
@@ -33,10 +33,10 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB-NVMe für maximale I/O-Performance bei Docker-Containern, Appdata-Datenbanken und dem Unraid Inbound-Cache. |
 | **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3,5", CMR) | Paritätsgeschützter Unraid-Storage-Pool (**1x Parity + 1x Data**). CMR-Technologie verhindert Leistungseinbrüche; XOR-Parität schützt vor Festplattenausfall. |
 | **HDD (Uni)** | 1x 250 GB Seagate DB35.4 HDD | **Unassigned Device** (außerhalb des Parity-Arrays) für aktive Hochschul-Daten. Schützt die großen 10-TB-Festplatten vor ständigen Spin-ups. |
-| **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Internes Slim-Laufwerk via USB-Adapter; LibreDrive-Kompatibilität zum verlustfreien Auslesen eigener Medien. *Hinweis:* Auslösung rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
+| **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Slim-Laufwerk, per USB-Adapter angeschlossen; LibreDrive-Kompatibilität zum verlustfreien Auslesen eigener Medien. *Hinweis:* Auslesen rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
 | **Bootmedium** | 32 GB Samsung BAR Plus (USB 3.1) | Schreibgeschützter Unraid-Boot-Stick; robustes Metallgehäuse für optimale Wärmeableitung im 24/7-Dauerbetrieb. |
 | **CPU-Kühler** | Thermalright Assassin X 120 SE | Tower-Kühler mit leisem 120mm PWM-Lüfter; verhindert Thermal Throttling bei dauerhafter CPU-Volllast. |
-| **Netzteil** | be quiet! System Power 11 450W (80+ Bronze) | Hocheffizientes Netzteil mit Nativ C6/C7-State-Unterstützung für minimale Verlustleistung bei niedriger Idle-Last. |
+| **Netzteil** | be quiet! System Power 11 450W (80+ Bronze) | Hocheffizientes Netzteil mit nativer C6/C7-State-Unterstützung für minimale Verlustleistung bei niedriger Idle-Last. |
 | **Gehäuse** | Fractal Design Define R5 (Black) | ATX Midi-Tower mit Schalldämmung, entkoppelten Festplattenschächten (Vibrationsdämpfung) und großzügigen Staubfiltern. |
 
 ---
@@ -68,40 +68,47 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 |  +------------------------------------------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
-## 3.1 Videostreams & Heimkino (Jellyfin)
-Direct Play & Hardware-Beschleunigung: Reines, open-source Medienserver-Setup ohne externe Pass-Through-Server. Nutzt die Intel UHD 730 Grafikeinheit (QuickSync) für verzögerungsfreies Hardware-Transcoding im Bedarfsfall.
 
-Plattformunabhängig: Streamt unkomprimierte Inhalte direkt an Endgeräte im Heimnetz (z. B. Apple TV 4K) sowie an mobile Clients unterwegs.
+### 3.1 Videostreams & Heimkino (Jellyfin)
 
-## 3.2 Hi-Fi Musikbibliothek (Navidrome)
-High-Performance Streaming: Ressourcenschonender, in Go geschriebener Musikserver für eigene CD-Rips (FLAC/MP3).
+**Direct Play & Hardware-Beschleunigung:** Reines, open-source Medienserver-Setup ohne externe Pass-Through-Server. Nutzt die Intel UHD 730 Grafikeinheit (QuickSync) für verzögerungsfreies Hardware-Transcoding im Bedarfsfall.
 
-Universelle Schnittstelle: Nutzt die Subsonic-API zur nahtlosen Anbindung mobiler Apps (iPhone/Android) im Auto oder unterwegs, ohne auf Drittanbieter-Abo-Dienste angewiesen zu sein.
+**Plattformunabhängig:** Streamt unkomprimierte Inhalte direkt an Endgeräte im Heimnetz (z. B. Apple TV 4K) sowie an mobile Clients unterwegs.
 
-## ### 3.3 Automatische Medienoptimierung (Tdarr Pipeline)
+### 3.2 Hi-Fi Musikbibliothek (Navidrome)
+
+**High-Performance Streaming:** Ressourcenschonender, in Go geschriebener Musikserver für eigene CD-Rips (FLAC/MP3).
+
+**Universelle Schnittstelle:** Nutzt die Subsonic-API zur nahtlosen Anbindung mobiler Apps (iPhone/Android) im Auto oder unterwegs, ohne auf Drittanbieter-Abo-Dienste angewiesen zu sein.
+
+### 3.3 Automatische Medienoptimierung (Tdarr Pipeline)
+
 * **Auflösungsabhängige Transkodierungs-Logik:** 
   * **Geringe Auflösung (SD/DVD):** Verarbeitung über die **CPU (x265)** für maximale Bildgenauigkeit und zur Vermeidung von Qualitätsverlusten und Artefakten.
   * **Hohe Auflösung (1080p/4K):** Auslagerung an **Intel QuickSync (GPU)** für ein besonders schnelles und energieeffizientes H.265-Transcoding.
 * **Automatisierte Flow-Pipeline:** Greift Rohdateien aus dem `/watch_folder` ab, prüft Codec/Bitrate/Auflösung, transkodiert selektiv und verschiebt die fertigen Medien direkt in die Jellyfin-Mediathek.
 
-Automatisierter Node-Workflow: Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
+**Automatisierter Node-Workflow:** Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
 ### 3.4 Automatisierter E-Ink Workflow & KI-Audioverarbeitung (Syncthing, n8n & Faster-Whisper)
+
 * **Nahtlose Dokumenten-Synchronisation:** Bi-direktionale Hintergrund-Synchronisation zwischen dem Onyx Boox Go 10.3 Tablet und dem Unraid-Server mittels **Syncthing** über eine verschlüsselte **Tailscale-VPN**-Verbindung (ermöglicht sicheren Remote-Zugriff aus dem Campusnetz der HTWG Konstanz).
 * **Automatisierte Audio-Transkriptions-Pipeline:** 
   * Vom Tablet hochgeladene Audioaufnahmen (z. B. Vorlesungsmitschnitte) werden automatisch erkannt.
   * **n8n Workflow-Automatisierung:** Steuert die Pipeline, holt neue Audiodateien ab, übergibt sie an einen lokal gehosteten **Faster-Whisper**-Container (GPU-beschleunigt via Nvidia GTX 1070) zur Speech-to-Text-Transkription und speichert das Ergebnis direkt im passenden Modulordner.
 
 ## 4. Roadmap & Geplante Erweiterungen
+
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
 
 - [x] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
 
 - [ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
 
-- [ ] Netzwerk-Härtung: Umfassende Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte.
+- [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository-Struktur
+
 In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehende Dokumentationen:
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
