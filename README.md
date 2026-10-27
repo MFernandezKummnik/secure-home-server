@@ -87,11 +87,12 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 **Automated Node Workflow:** Drastically reduces file sizes while maintaining visual quality, saving storage space on the 10 TB HDDs and easing network bandwidth.
 
-### 3.4 Automated E-Ink Workflow & AI Audio Processing (Syncthing & Faster-Whisper)
+### 3.4 Automated E-Ink Workflow & Lecture Transcription (Syncthing, Whisper & Ollama)
 
 * **Seamless Document Sync:** Bidirectional background synchronization between the Onyx Boox Go 10.3 tablet and the Unraid server using **Syncthing**, ensuring lecture materials and handwritten notes are instantly backed up and accessible.
-* **Local Audio Transcription:** Lecture recordings from the tablet are transcribed by a self-hosted **Faster-Whisper** container (GPU-accelerated via the Nvidia GTX 1070), without any cloud service.
-* **Automation Approach:** The earlier n8n orchestration has been retired because its maintenance effort and resource usage were out of proportion to the task. Automations on this server are now implemented as lightweight Bash scripts (see [`scripts/zeitung/`](scripts/zeitung/)); the automatic folder watch for new audio files will be rebuilt the same way (see roadmap).
+* **Local Audio Transcription:** Lecture recordings from the tablet are transcribed every night by **Whisper `large-v3`** (faster-whisper engine, GPU-accelerated on the GTX 1070 with `int8`), without any cloud service.
+* **Study Summaries:** A local LLM (**Ollama**) turns each transcript into a structured summary; transcript and summary are filed into the matching course folder automatically, and the audio is archived outside the synced share to free space on the tablet.
+* **Automation Approach:** The earlier n8n orchestration has been retired because its maintenance effort and resource usage were out of proportion to the task. Automations on this server are now implemented as lightweight Bash scripts; the transcription pipeline runs as a nightly batch job (see [`scripts/transkript/`](scripts/transkript/)).
 
 ### 3.5 Local AI Weekly Newspaper (Bash & Ollama)
 
@@ -115,7 +116,7 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
 
-- [x] Local AI Transcription: Integrating a self-contained Docker container (faster-whisper) for locally processing lecture audio.
+- [x] Local AI Transcription: Nightly pipeline with Whisper (GPU) and Ollama that transcribes, summarizes, files and archives lecture recordings (see [`scripts/transkript/`](scripts/transkript/)).
 
 - [x] Local AI Newspaper: Weekly news digest generated entirely on my own hardware with Bash and Ollama (see [`scripts/zeitung/`](scripts/zeitung/)).
 
@@ -125,7 +126,7 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [ ] Self-Hosted Password Manager: Vaultwarden, reachable only inside the tailnet.
 
-- [ ] Extended Scripting Automation: Creating custom Bash and watchdog scripts for automated backups and folder monitoring.
+- [ ] Automated Backups: Nightly encrypted backups to a second drive and an off-server device, starting with the password manager.
 
 - [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
@@ -135,7 +136,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
 
-* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix), Pi-hole, and administrative tools.
+* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, and administrative tools.
 
 * **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) and the **calendar bot** (`scripts/kalenderbot/`).
 

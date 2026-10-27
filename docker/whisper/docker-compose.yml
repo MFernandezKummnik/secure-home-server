@@ -1,0 +1,31 @@
+services:
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest-gpu
+    container_name: whisper
+    environment:
+      # faster-whisper engine (CTranslate2) on the GPU
+      - ASR_ENGINE=faster_whisper
+      - ASR_DEVICE=cuda
+      # Most accurate model – runs at night, so speed matters less than quality
+      - ASR_MODEL=large-v3
+      # GTX 1070 (Pascal) has no efficient float16; int8 needs ~1/3 of the VRAM
+      - ASR_QUANTIZATION=int8
+      - ASR_MODEL_PATH=/data/whisper
+      # Unload the model after 5 min idle – the 8 GB VRAM are shared with Ollama
+      - MODEL_IDLE_TIMEOUT=300
+    volumes:
+      # Downloaded models persist outside the container
+      - /mnt/user/appdata/whisper-asr:/data/whisper
+    ports:
+      # Localhost only – used by the nightly transcription script on the host
+      - 127.0.0.1:9000:9000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+# API documentation of a running instance: http://127.0.0.1:9000/docs

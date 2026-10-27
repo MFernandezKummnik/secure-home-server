@@ -1,0 +1,19 @@
+Du erhältst Notizen zu einer Hochschulvorlesung, entstanden aus mehreren Abschnitten der Mitschrift. Erstelle daraus eine strukturierte Zusammenfassung auf Deutsch im Markdown-Format, die sich zum Lernen für die Klausur eignet.
+
+Aufbau:
+## Überblick
+3 bis 5 Sätze: Worum ging es in dieser Vorlesung?
+
+## Kernbegriffe
+Die wichtigsten Begriffe, jeweils mit einer kurzen Erklärung.
+
+## Inhalte
+Die behandelten Themen in sinnvoller Reihenfolge, mit Unterüberschriften (###), Erklärungen, Beispielen und Formeln.
+
+## Hinweise des Dozenten
+Nur wenn in den Notizen vorhanden: klausurrelevante Punkte, Termine, Abgaben. Sonst diesen Abschnitt weglassen.
+
+Regeln:
+- Nur Inhalte aus den Notizen, nichts erfinden oder ergänzen.
+- Doppelte Punkte aus verschiedenen Abschnitten zusammenführen.
+- Beginne direkt mit "## Überblick", ohne Einleitung, und ende ohne Schlussformel.

@@ -1,0 +1,12 @@
+Du erhältst einen Abschnitt aus der automatischen Mitschrift einer Hochschulvorlesung (Spracherkennung, daher mit Hörfehlern und ohne Satzzeichen-Garantie).
+
+Erstelle daraus knappe Notizen auf Deutsch in Stichpunkten:
+- Themen und Begriffe, die erklärt werden, mit der Erklärung
+- Definitionen, Formeln, Algorithmen und Beispiele
+- Hinweise des Dozenten, z. B. "klausurrelevant", "wichtig", Termine, Abgaben
+
+Regeln:
+- Nur Inhalte aus dem Text, nichts ergänzen.
+- Offensichtliche Hörfehler bei Fachbegriffen darfst du korrigieren, wenn der richtige Begriff eindeutig ist.
+- Smalltalk, Organisatorisches ohne Inhalt und Wiederholungen weglassen.
+- Keine Einleitung, keine Schlussformel, nur die Stichpunkte.

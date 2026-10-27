@@ -87,11 +87,12 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 **Automatisierter Node-Workflow:** Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
-### 3.4 Automatisierter E-Ink Workflow & KI-Audioverarbeitung (Syncthing & Faster-Whisper)
+### 3.4 Automatisierter E-Ink Workflow & Vorlesungs-Transkription (Syncthing, Whisper & Ollama)
 
 * **Nahtlose Dokumenten-Synchronisation:** Bi-direktionale Hintergrund-Synchronisation zwischen dem Onyx Boox Go 10.3 Tablet und dem Unraid-Server mittels **Syncthing** über eine verschlüsselte **Tailscale-VPN**-Verbindung (ermöglicht sicheren Remote-Zugriff aus dem Campusnetz der HTWG Konstanz).
-* **Lokale Audio-Transkription:** Vorlesungsaufnahmen vom Tablet werden von einem lokal gehosteten **Faster-Whisper**-Container (GPU-beschleunigt via Nvidia GTX 1070) transkribiert, ganz ohne Cloud-Dienst.
-* **Ansatz für Automatisierungen:** Die frühere Steuerung über n8n wurde entfernt, weil Wartungsaufwand und Ressourcenverbrauch in keinem Verhältnis zur Aufgabe standen. Automatisierungen laufen auf diesem Server inzwischen als schlanke Bash-Skripte (siehe [`scripts/zeitung/`](scripts/zeitung/)); die automatische Ordnerüberwachung für neue Audiodateien wird auf dieselbe Weise neu aufgebaut (siehe Roadmap).
+* **Lokale Audio-Transkription:** Vorlesungsaufnahmen vom Tablet werden jede Nacht von **Whisper `large-v3`** transkribiert (faster-whisper-Engine, GPU-beschleunigt auf der GTX 1070 mit `int8`), ganz ohne Cloud-Dienst.
+* **Lern-Zusammenfassungen:** Ein lokales Sprachmodell (**Ollama**) erstellt aus jedem Transkript eine strukturierte Zusammenfassung; Transkript und Zusammenfassung werden automatisch im passenden Fachordner abgelegt, und die Aufnahme wird außerhalb des synchronisierten Ordners archiviert, damit sie auf dem Tablet keinen Platz mehr belegt.
+* **Ansatz für Automatisierungen:** Die frühere Steuerung über n8n wurde entfernt, weil Wartungsaufwand und Ressourcenverbrauch in keinem Verhältnis zur Aufgabe standen. Automatisierungen laufen auf diesem Server inzwischen als schlanke Bash-Skripte; die Transkriptions-Pipeline läuft als nächtlicher Batch-Job (siehe [`scripts/transkript/`](scripts/transkript/)).
 
 ### 3.5 Lokale KI-Wochenzeitung (Bash & Ollama)
 
@@ -115,7 +116,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
 
-- [x] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
+- [x] Lokale KI-Transkription: Nächtliche Pipeline mit Whisper (GPU) und Ollama, die Vorlesungsaufnahmen transkribiert, zusammenfasst, einsortiert und archiviert (siehe [`scripts/transkript/`](scripts/transkript/)).
 
 - [x] Lokale KI-Zeitung: Wöchentlicher Nachrichtenüberblick, komplett auf eigener Hardware mit Bash und Ollama erzeugt (siehe [`scripts/zeitung/`](scripts/zeitung/)).
 
@@ -125,7 +126,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [ ] Selbst gehosteter Passwort-Manager: Vaultwarden, nur innerhalb des Tailnets erreichbar.
 
-- [ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
+- [ ] Automatische Backups: Nächtliche, verschlüsselte Backups auf ein zweites Laufwerk und ein Gerät außerhalb des Servers, beginnend mit dem Passwort-Manager.
 
 - [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
@@ -135,7 +136,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix), Pi-hole und Admin-Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole und Admin-Tools.
 
 * **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) und des **Kalender-Bots** (`scripts/kalenderbot/`).
 
