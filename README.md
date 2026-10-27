@@ -49,8 +49,8 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 +-------------------------------------------------------------------+
 |                     DOCKER APPLICATION STACK                      |
 | +------------+---------------+------------------+---------------+ |
-| | Jellyfin   | Navidrome     | Tdarr Engine     | n8n           | |
-| | (Video)    | (Hi-Fi Music) | (Transcoding)    | (Automation)  | |
+| | Jellyfin   | Navidrome     | Tdarr Engine     | Ollama        | |
+| | (Video)    | (Hi-Fi Music) | (Transcoding)    | (Local AI)    | |
 | +------------+---------------+------------------+---------------+ |
 | | Administrative Tools, Syncthing & Tailscale Mesh-VPN          | |
 +---------------------------------------+---------------------------+
@@ -87,12 +87,11 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 **Automated Node Workflow:** Drastically reduces file sizes while maintaining visual quality, saving storage space on the 10 TB HDDs and easing network bandwidth.
 
-### 3.4 Automated E-Ink Workflow & AI Audio Processing (Syncthing, n8n & Faster-Whisper)
+### 3.4 Automated E-Ink Workflow & AI Audio Processing (Syncthing & Faster-Whisper)
 
 * **Seamless Document Sync:** Bidirectional background synchronization between the Onyx Boox Go 10.3 tablet and the Unraid server using **Syncthing**, ensuring lecture materials and handwritten notes are instantly backed up and accessible.
-* **Automated Audio Transcription Pipeline:** 
-  * Audio recordings (e.g., lecture recordings) uploaded from the tablet are detected automatically via folder watch triggers.
-  * **n8n Workflow Automation:** Orchestrates the processing pipeline by fetching new audio files, passing them to a self-hosted **Faster-Whisper** container for localized speech-to-text transcription, and saving the generated transcripts alongside the original notes without cloud intervention.
+* **Local Audio Transcription:** Lecture recordings from the tablet are transcribed by a self-hosted **Faster-Whisper** container (GPU-accelerated via the Nvidia GTX 1070), without any cloud service.
+* **Automation Approach:** The earlier n8n orchestration has been retired because its maintenance effort and resource usage were out of proportion to the task. Automations on this server are now implemented as lightweight Bash scripts (see [`scripts/zeitung/`](scripts/zeitung/)); the automatic folder watch for new audio files will be rebuilt the same way (see roadmap).
 
 ### 3.5 Local AI Weekly Newspaper (Bash & Ollama)
 
@@ -118,9 +117,9 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
 
-* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper, and administrative tools.
+* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Faster-Whisper, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom scripts and automated pipelines, including the **n8n E-Ink transcription workflow** (`scripts/n8n/`) and the **local AI weekly newspaper** (`scripts/zeitung/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`).
 
 ---
 

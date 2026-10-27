@@ -49,8 +49,8 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 +-------------------------------------------------------------------+
 |                     DOCKER APPLICATION STACK                      |
 | +------------+---------------+------------------+---------------+ |
-| | Jellyfin   | Navidrome     | Tdarr Engine     | n8n           | |
-| | (Video)    | (Hi-Fi Musik) | (Transcoding)    | (Automation)  | |
+| | Jellyfin   | Navidrome     | Tdarr Engine     | Ollama        | |
+| | (Video)    | (Hi-Fi Musik) | (Transcoding)    | (Lokale KI)   | |
 | +------------+---------------+------------------+---------------+ |
 | | Administrative Tools, Syncthing & Tailscale Mesh-VPN          | |
 +---------------------------------------+---------------------------+
@@ -87,12 +87,11 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 **Automatisierter Node-Workflow:** Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
 
-### 3.4 Automatisierter E-Ink Workflow & KI-Audioverarbeitung (Syncthing, n8n & Faster-Whisper)
+### 3.4 Automatisierter E-Ink Workflow & KI-Audioverarbeitung (Syncthing & Faster-Whisper)
 
 * **Nahtlose Dokumenten-Synchronisation:** Bi-direktionale Hintergrund-Synchronisation zwischen dem Onyx Boox Go 10.3 Tablet und dem Unraid-Server mittels **Syncthing** über eine verschlüsselte **Tailscale-VPN**-Verbindung (ermöglicht sicheren Remote-Zugriff aus dem Campusnetz der HTWG Konstanz).
-* **Automatisierte Audio-Transkriptions-Pipeline:** 
-  * Vom Tablet hochgeladene Audioaufnahmen (z. B. Vorlesungsmitschnitte) werden automatisch erkannt.
-  * **n8n Workflow-Automatisierung:** Steuert die Pipeline, holt neue Audiodateien ab, übergibt sie an einen lokal gehosteten **Faster-Whisper**-Container (GPU-beschleunigt via Nvidia GTX 1070) zur Speech-to-Text-Transkription und speichert das Ergebnis direkt im passenden Modulordner.
+* **Lokale Audio-Transkription:** Vorlesungsaufnahmen vom Tablet werden von einem lokal gehosteten **Faster-Whisper**-Container (GPU-beschleunigt via Nvidia GTX 1070) transkribiert, ganz ohne Cloud-Dienst.
+* **Ansatz für Automatisierungen:** Die frühere Steuerung über n8n wurde entfernt, weil Wartungsaufwand und Ressourcenverbrauch in keinem Verhältnis zur Aufgabe standen. Automatisierungen laufen auf diesem Server inzwischen als schlanke Bash-Skripte (siehe [`scripts/zeitung/`](scripts/zeitung/)); die automatische Ordnerüberwachung für neue Audiodateien wird auf dieselbe Weise neu aufgebaut (siehe Roadmap).
 
 ### 3.5 Lokale KI-Wochenzeitung (Bash & Ollama)
 
@@ -118,9 +117,9 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper und Admin-Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Faster-Whisper und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Automatisierungsskripte und Pipelines, inklusive des **n8n E-Ink Transkriptions-Workflows** (`scripts/n8n/`) und der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`).
 
 ---
 
