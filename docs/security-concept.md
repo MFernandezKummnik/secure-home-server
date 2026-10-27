@@ -16,6 +16,7 @@ To minimize the attack surface, local services are not exposed directly to the p
   * Administrative access (SSH, Unraid Management UI) is limited to untagged control devices of the owner.
   * **Policy tests** run on every save and reject any change that would open SSH, the management UIs or unencrypted service ports to tagged devices.
 * **Localhost Binding & HTTPS via `tailscale serve`:** The calendar (Radicale) and the chat server (Matrix) listen on `127.0.0.1` only. They are not reachable from the home LAN at all (including IoT devices) and are exposed exclusively inside the tailnet through `tailscale serve`, which terminates HTTPS with a valid `*.ts.net` certificate. Tailscale Funnel (public exposure) is not used.
+* **DNS Filtering (Pi-hole):** All home network devices resolve through Pi-hole, which blocks known tracking domains and forwards to Quad9 with DNSSEC validation and malware filtering. Known gap: clients can bypass it via the router's IPv6 DNS (see [`docker/pihole/`](../docker/pihole/)).
 * **Application-Level Scoping (Syncthing):** The E-Ink tablet synchronizes exactly two shared folders via Syncthing; no other server data is shared with it.
 
 ---
@@ -39,6 +40,8 @@ To minimize the attack surface, local services are not exposed directly to the p
 | **Credential Sniffing on the Home Network** | Calendar and chat bound to localhost; access only via HTTPS through `tailscale serve`. |
 | **Lost or Compromised Smartphone** | Tag-based ACL limits it to four service ports; the device can be removed from the tailnet instantly. |
 | **Password Brute Force (Calendar)** | bcrypt-hashed credentials, 1 s delay after failed logins, connection limit in Radicale. |
+| **Tracking by Apps & IoT Devices** | Network-wide DNS blocklists (Pi-hole); query log for visibility. Partial coverage due to IPv6. |
+| **Malware / Phishing Domains** | Quad9 filtered upstream with DNSSEC for all devices. |
 | **Data Leakage in Public Docs** | Zero-trust documentation standard: strict exclusion of internal IP addresses, MAC addresses, or credentials from public git repositories. |
 
 ---

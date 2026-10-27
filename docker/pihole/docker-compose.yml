@@ -1,0 +1,27 @@
+services:
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    environment:
+      - TZ=Europe/Berlin
+      # Required on Docker's bridge network; also answers queries from the tailnet (100.x)
+      - FTLCONF_dns_listeningMode=all
+      # Upstream: Quad9 (filtered, DNSSEC, no ECS) – set as code, locked in the web UI
+      - FTLCONF_dns_upstreams=9.9.9.9;149.112.112.112
+    # Web password lives in a separate chmod 600 file instead of the compose file
+    env_file: pihole.env
+    volumes:
+      - /mnt/user/appdata/pihole/etc-pihole:/etc/pihole
+    ports:
+      # DNS for the home network (LAN) and the tailnet
+      - 53:53/tcp
+      - 53:53/udp
+      # Web UI on localhost only (port 80 is taken by the Unraid WebUI);
+      # reachable inside the tailnet via `tailscale serve`
+      - 127.0.0.1:8089:80/tcp
+    # No extra capabilities: NET_ADMIN / SYS_TIME are only needed for DHCP / NTP
+    restart: unless-stopped
+
+# HTTPS for the web UI inside the tailnet (run once on the host):
+#   tailscale serve --bg --https=8090 http://127.0.0.1:8089
+#   → https://<server>.<tailnet>.ts.net:8090/admin

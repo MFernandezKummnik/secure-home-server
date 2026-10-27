@@ -106,6 +106,11 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **Calendar Bot:** Messages like *"nächste Woche Dienstag Abgabe ALDA"* are parsed by a local LLM into structured fields, the date is calculated deterministically in code, and the event is written via CalDAV after an explicit confirmation. The bot can also list and delete events. Details in [`scripts/kalenderbot/`](scripts/kalenderbot/).
 * **Zero Exposure:** Both services listen on `127.0.0.1` only and are reachable exclusively via HTTPS through `tailscale serve`, with tag-based ACLs per device (see [`docs/security-concept.md`](docs/security-concept.md)).
 
+### 3.7 Network-Wide DNS Filtering (Pi-hole)
+
+* **Pi-hole** answers the DNS queries of the home network via the router's DHCP settings and forwards to **Quad9** (DNSSEC, malware filter). The admin UI is only reachable inside the tailnet.
+* **Honest result:** it does not remove ad banners on streaming devices and adds nothing in the browser (already covered by Brave); part of the traffic bypasses it via IPv6. It is kept for blocking tracking from apps and IoT devices and for visibility into what each device contacts. Details and lessons learned in [`docker/pihole/`](docker/pihole/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -115,6 +120,8 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 - [x] Local AI Newspaper: Weekly news digest generated entirely on my own hardware with Bash and Ollama (see [`scripts/zeitung/`](scripts/zeitung/)).
 
 - [x] Self-Hosted Calendar & Chat: Radicale, a private Matrix homeserver and a local-AI calendar bot (see [`scripts/kalenderbot/`](scripts/kalenderbot/)).
+
+- [x] DNS Filtering: Pi-hole for tracker blocking and device visibility (IPv6 bypass still open, see [`docker/pihole/`](docker/pihole/)).
 
 - [ ] Self-Hosted Password Manager: Vaultwarden, reachable only inside the tailnet.
 
@@ -128,7 +135,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
 
-* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix), and administrative tools.
+* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix), Pi-hole, and administrative tools.
 
 * **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) and the **calendar bot** (`scripts/kalenderbot/`).
 

@@ -106,6 +106,11 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Kalender-Bot:** Nachrichten wie *„nächste Woche Dienstag Abgabe ALDA“* zerlegt ein lokales Sprachmodell in feste Felder, das Datum berechnet der Code deterministisch, und nach ausdrücklicher Bestätigung wird der Termin per CalDAV eingetragen. Der Bot kann Termine außerdem anzeigen und löschen. Details in [`scripts/kalenderbot/`](scripts/kalenderbot/).
 * **Keine Angriffsfläche nach außen:** Beide Dienste lauschen nur auf `127.0.0.1` und sind ausschließlich per HTTPS über `tailscale serve` erreichbar, mit Tag-basierten ACLs pro Gerät (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
+### 3.7 Netzwerkweiter DNS-Filter (Pi-hole)
+
+* **Pi-hole** beantwortet über die DHCP-Einstellungen des Routers die DNS-Anfragen im Heimnetz und leitet an **Quad9** weiter (DNSSEC, Schadsoftware-Filter). Die Verwaltungsoberfläche ist nur innerhalb des Tailnets erreichbar.
+* **Ehrliches Ergebnis:** Werbebanner auf Streaming-Geräten entfernt es nicht, im Browser bringt es nichts zusätzlich (dort blockt bereits Brave), und ein Teil der Anfragen umgeht es über IPv6. Es bleibt im Einsatz, um Tracking von Apps und IoT-Geräten zu blocken und sichtbar zu machen, mit wem welches Gerät kommuniziert. Details und Erkenntnisse in [`docker/pihole/`](docker/pihole/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -115,6 +120,8 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 - [x] Lokale KI-Zeitung: Wöchentlicher Nachrichtenüberblick, komplett auf eigener Hardware mit Bash und Ollama erzeugt (siehe [`scripts/zeitung/`](scripts/zeitung/)).
 
 - [x] Eigener Kalender & Chat: Radicale, ein privater Matrix-Homeserver und ein Kalender-Bot mit lokaler KI (siehe [`scripts/kalenderbot/`](scripts/kalenderbot/)).
+
+- [x] DNS-Filter: Pi-hole zum Blocken von Tracking und für Einblick in den Geräteverkehr (IPv6-Umgehung noch offen, siehe [`docker/pihole/`](docker/pihole/)).
 
 - [ ] Selbst gehosteter Passwort-Manager: Vaultwarden, nur innerhalb des Tailnets erreichbar.
 
@@ -128,7 +135,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix) und Admin-Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix), Pi-hole und Admin-Tools.
 
 * **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) und des **Kalender-Bots** (`scripts/kalenderbot/`).
 
