@@ -112,6 +112,11 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **Pi-hole** answers the DNS queries of the home network via the router's DHCP settings and forwards to **Quad9** (DNSSEC, malware filter). The admin UI is only reachable inside the tailnet.
 * **Honest result:** it does not remove ad banners on streaming devices and adds nothing in the browser (already covered by Brave); part of the traffic bypasses it via IPv6. It does remove **in-app ads on the smartphone** while on the home Wi-Fi, and is kept for that, for blocking tracking from apps and IoT devices, and for visibility into what each device contacts. Details and lessons learned in [`docker/pihole/`](docker/pihole/).
 
+### 3.8 Password Manager & Encrypted Backups (Vaultwarden)
+
+* **Self-Hosted Vault:** **Vaultwarden** (Bitwarden-compatible) replaces the browser's password storage and is used with the official Bitwarden apps on phone, laptop and PC. Zero-knowledge: entries are encrypted on the client, the server only stores ciphertext. Reachable only inside the tailnet via HTTPS; signups and the admin panel are disabled. Details in [`docker/vaultwarden/`](docker/vaultwarden/).
+* **Verified Nightly Backups:** A consistent SQLite snapshot is encrypted (AES-256, separate passphrase), test-decrypted, stored on the HDD array and synced to the laptop, where versioning keeps deleted backups for 180 days. Details and lessons learned in [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -124,9 +129,11 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [x] DNS Filtering: Pi-hole for tracker blocking and device visibility (IPv6 bypass still open, see [`docker/pihole/`](docker/pihole/)).
 
-- [ ] Self-Hosted Password Manager: Vaultwarden, reachable only inside the tailnet.
+- [x] Self-Hosted Password Manager: Vaultwarden, reachable only inside the tailnet (see [`docker/vaultwarden/`](docker/vaultwarden/)).
 
-- [ ] Automated Backups: Nightly encrypted backups to a second drive and an off-server device, starting with the password manager.
+- [x] Encrypted Backups for the Password Manager: Nightly, verified backups to the HDD array and the laptop (see [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/)).
+
+- [ ] Automated Backups for the Remaining Data: University documents and service configurations, following the same pattern; plus a full restore test.
 
 - [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
@@ -136,9 +143,9 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
 
-* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, and administrative tools.
+* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) and the **calendar bot** (`scripts/kalenderbot/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`) and the **Vaultwarden backup** (`scripts/vaultwarden-backup/`).
 
 ---
 

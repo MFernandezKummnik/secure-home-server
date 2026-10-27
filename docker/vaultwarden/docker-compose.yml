@@ -1,0 +1,28 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    # Run as nobody:users like all other containers on the server
+    user: "99:100"
+    environment:
+      # Unprivileged user cannot bind port 80 inside the container
+      - ROCKET_PORT=8080
+      # Public URL of the vault (tailnet only) – needed for links and WebAuthn
+      - DOMAIN=https://<server>.<tailnet>.ts.net:8444
+      # Opened once to create the owner account, then closed for good
+      - SIGNUPS_ALLOWED=false
+      - INVITATIONS_ALLOWED=false
+      - SHOW_PASSWORD_HINT=false
+      # No ADMIN_TOKEN set: the /admin panel is disabled entirely
+    volumes:
+      - /mnt/user/appdata/vaultwarden:/data
+    ports:
+      # Bound to localhost only: the only way in is HTTPS via `tailscale serve`
+      - 127.0.0.1:8085:8080
+    restart: unless-stopped
+
+# Encrypted access from the tailnet (run once on the host):
+#   tailscale serve --bg --https=8444 http://127.0.0.1:8085
+#   → https://<server>.<tailnet>.ts.net:8444
+#
+# Nightly encrypted backup: see scripts/vaultwarden-backup/

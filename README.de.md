@@ -112,6 +112,11 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Pi-hole** beantwortet über die DHCP-Einstellungen des Routers die DNS-Anfragen im Heimnetz und leitet an **Quad9** weiter (DNSSEC, Schadsoftware-Filter). Die Verwaltungsoberfläche ist nur innerhalb des Tailnets erreichbar.
 * **Ehrliches Ergebnis:** Werbebanner auf Streaming-Geräten entfernt es nicht, im Browser bringt es nichts zusätzlich (dort blockt bereits Brave), und ein Teil der Anfragen umgeht es über IPv6. Es entfernt aber **Werbung in Apps auf dem Smartphone**, solange es im WLAN zu Hause ist, und bleibt dafür im Einsatz, außerdem um Tracking von Apps und IoT-Geräten zu blocken und sichtbar zu machen, mit wem welches Gerät kommuniziert. Details und Erkenntnisse in [`docker/pihole/`](docker/pihole/).
 
+### 3.8 Passwort-Manager & verschlüsselte Backups (Vaultwarden)
+
+* **Eigener Tresor:** **Vaultwarden** (Bitwarden-kompatibel) ersetzt den Passwortspeicher des Browsers und wird mit den offiziellen Bitwarden-Apps auf Smartphone, Laptop und PC genutzt. Zero-Knowledge: Einträge werden auf dem Gerät verschlüsselt, der Server speichert nur Chiffretext. Nur innerhalb des Tailnets per HTTPS erreichbar; Registrierung und Admin-Bereich sind deaktiviert. Details in [`docker/vaultwarden/`](docker/vaultwarden/).
+* **Geprüfte nächtliche Backups:** Ein konsistenter SQLite-Schnappschuss wird verschlüsselt (AES-256, eigenes Backup-Passwort), testweise entschlüsselt, auf dem HDD-Array abgelegt und auf den Laptop synchronisiert, wo eine Versionierung gelöschte Backups 180 Tage aufbewahrt. Details und Erkenntnisse in [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -124,9 +129,11 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] DNS-Filter: Pi-hole zum Blocken von Tracking und für Einblick in den Geräteverkehr (IPv6-Umgehung noch offen, siehe [`docker/pihole/`](docker/pihole/)).
 
-- [ ] Selbst gehosteter Passwort-Manager: Vaultwarden, nur innerhalb des Tailnets erreichbar.
+- [x] Selbst gehosteter Passwort-Manager: Vaultwarden, nur innerhalb des Tailnets erreichbar (siehe [`docker/vaultwarden/`](docker/vaultwarden/)).
 
-- [ ] Automatische Backups: Nächtliche, verschlüsselte Backups auf ein zweites Laufwerk und ein Gerät außerhalb des Servers, beginnend mit dem Passwort-Manager.
+- [x] Verschlüsselte Backups für den Passwort-Manager: Nächtliche, geprüfte Backups auf das HDD-Array und den Laptop (siehe [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/)).
+
+- [ ] Automatische Backups für die übrigen Daten: Uni-Dokumente und Dienst-Konfigurationen nach demselben Muster, dazu ein vollständiger Wiederherstellungstest.
 
 - [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
@@ -136,9 +143,9 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole und Admin-Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) und des **Kalender-Bots** (`scripts/kalenderbot/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`) und des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`).
 
 ---
 

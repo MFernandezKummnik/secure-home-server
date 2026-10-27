@@ -15,9 +15,9 @@
 		// 1. Own, untagged devices (laptop, server): full access
 		{"src": ["autogroup:member"], "dst": ["*"], "ip": ["*"]},
 
-		// 2. Smartphone: media streaming, calendar (HTTPS) and Matrix (HTTPS) only
-		//    8096 Jellyfin · 4533 Navidrome · 8443 Radicale · 8448 Matrix
-		{"src": ["tag:mobile"], "dst": ["server"], "ip": ["tcp:8096", "tcp:4533", "tcp:8443", "tcp:8448"]},
+		// 2. Smartphone: media streaming, calendar, Matrix and password manager (all HTTPS except media)
+		//    8096 Jellyfin · 4533 Navidrome · 8443 Radicale · 8448 Matrix · 8444 Vaultwarden
+		{"src": ["tag:mobile"], "dst": ["server"], "ip": ["tcp:8096", "tcp:4533", "tcp:8443", "tcp:8448", "tcp:8444"]},
 
 		// 3. E-Ink tablet: Syncthing only
 		{"src": ["tag:eink"], "dst": ["server"], "ip": ["tcp:22000", "udp:22000"]},
@@ -36,9 +36,9 @@
 	"tests": [
 		{
 			"src":    "tag:mobile",
-			"accept": ["server:8096", "server:4533", "server:8443", "server:8448"],
-			// SSH, Unraid WebUI, Syncthing UI, unencrypted Radicale
-			"deny":   ["server:22", "server:80", "server:8384", "server:5232"],
+			"accept": ["server:8096", "server:4533", "server:8443", "server:8448", "server:8444"],
+			// SSH, Unraid WebUI, Syncthing UI, unencrypted Radicale, unencrypted Vaultwarden
+			"deny":   ["server:22", "server:80", "server:8384", "server:5232", "server:8085"],
 		},
 		{
 			"src":    "tag:eink",
