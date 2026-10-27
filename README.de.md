@@ -99,6 +99,13 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Zuverlässigkeit als Grundprinzip:** Eine geprüfte Modellanfrage pro Rubrik (Prüfung von `done_reason`, Wiederholungen), fest gesetztes Kontextfenster, atomares Schreiben, Sperre gegen Doppelstarts und Protokollierung pro Schritt.
 * **Lesen auf dem E-Ink-Tablet:** Die neueste Ausgabe wird per Syncthing auf den Onyx Boox übertragen (*Nur senden* / *Nur empfangen*), ältere Ausgaben werden automatisch entfernt. Details in [`scripts/zeitung/`](scripts/zeitung/).
 
+### 3.6 Eigener Kalender- & Chat-Bot (Radicale, Matrix & Ollama)
+
+* **Eigener Kalender-Server:** **Radicale** (CalDAV) ersetzt Cloud-Kalender. Die Kalender-App des Smartphones synchronisiert direkt damit; der Stundenplan des Semesters wird als wiederkehrende Termine aus einer generierten `.ics`-Datei importiert.
+* **Privater Chat-Server:** Ein **continuwuity**-Matrix-Homeserver ohne Federation, genutzt mit der App Element X.
+* **Kalender-Bot:** Nachrichten wie *„nächste Woche Dienstag Abgabe ALDA“* zerlegt ein lokales Sprachmodell in feste Felder, das Datum berechnet der Code deterministisch, und nach ausdrücklicher Bestätigung wird der Termin per CalDAV eingetragen. Der Bot kann Termine außerdem anzeigen und löschen. Details in [`scripts/kalenderbot/`](scripts/kalenderbot/).
+* **Keine Angriffsfläche nach außen:** Beide Dienste lauschen nur auf `127.0.0.1` und sind ausschließlich per HTTPS über `tailscale serve` erreichbar, mit Tag-basierten ACLs pro Gerät (siehe [`docs/security-concept.md`](docs/security-concept.md)).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -106,6 +113,10 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 - [x] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
 
 - [x] Lokale KI-Zeitung: Wöchentlicher Nachrichtenüberblick, komplett auf eigener Hardware mit Bash und Ollama erzeugt (siehe [`scripts/zeitung/`](scripts/zeitung/)).
+
+- [x] Eigener Kalender & Chat: Radicale, ein privater Matrix-Homeserver und ein Kalender-Bot mit lokaler KI (siehe [`scripts/kalenderbot/`](scripts/kalenderbot/)).
+
+- [ ] Selbst gehosteter Passwort-Manager: Vaultwarden, nur innerhalb des Tailnets erreichbar.
 
 - [ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
 
@@ -117,9 +128,9 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docs/`](docs/):** Detaillierte Dokumentation zu Hardware-Architektur, Netzwerktopologie und Sicherheitskonzepten.
 
-* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Faster-Whisper und Admin-Tools.
+* **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix) und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) und des **Kalender-Bots** (`scripts/kalenderbot/`).
 
 ---
 

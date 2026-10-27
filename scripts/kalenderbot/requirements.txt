@@ -1,0 +1,4 @@
+matrix-nio>=0.25,<1
+requests>=2.31,<3
+icalendar>=6,<8
+recurring-ical-events>=3,<4

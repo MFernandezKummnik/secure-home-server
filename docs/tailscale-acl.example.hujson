@@ -1,0 +1,49 @@
+// Tailscale access policy (anonymized example of the live configuration).
+// Untagged devices of the owner have full access; tagged devices only reach
+// the ports they need. Everything else is denied by default.
+{
+	"hosts": {
+		"server": "100.x.y.z", // Tailscale IP of the Unraid server
+	},
+
+	"tagOwners": {
+		"tag:mobile": ["autogroup:admin"], // smartphone
+		"tag:eink":   ["autogroup:admin"], // E-Ink tablet
+	},
+
+	"grants": [
+		// 1. Own, untagged devices (laptop, server): full access
+		{"src": ["autogroup:member"], "dst": ["*"], "ip": ["*"]},
+
+		// 2. Smartphone: media streaming, calendar (HTTPS) and Matrix (HTTPS) only
+		//    8096 Jellyfin · 4533 Navidrome · 8443 Radicale · 8448 Matrix
+		{"src": ["tag:mobile"], "dst": ["server"], "ip": ["tcp:8096", "tcp:4533", "tcp:8443", "tcp:8448"]},
+
+		// 3. E-Ink tablet: Syncthing only
+		{"src": ["tag:eink"], "dst": ["server"], "ip": ["tcp:22000", "udp:22000"]},
+	],
+
+	"ssh": [
+		{
+			"action": "check",
+			"src":    ["autogroup:member"],
+			"dst":    ["autogroup:self"],
+			"users":  ["autogroup:nonroot", "root"],
+		},
+	],
+
+	// Evaluated on every save – a policy that breaks these is rejected.
+	"tests": [
+		{
+			"src":    "tag:mobile",
+			"accept": ["server:8096", "server:4533", "server:8443", "server:8448"],
+			// SSH, Unraid WebUI, Syncthing UI, unencrypted Radicale
+			"deny":   ["server:22", "server:80", "server:8384", "server:5232"],
+		},
+		{
+			"src":    "tag:eink",
+			"accept": ["server:22000"],
+			"deny":   ["server:5232", "server:22", "server:80"],
+		},
+	],
+}

@@ -1,0 +1,22 @@
+services:
+  kalenderbot:
+    build: .
+    image: kalenderbot
+    container_name: kalenderbot
+    # Host network: Matrix (8008), Radicale (5232) and Ollama (11434)
+    # are only reachable on 127.0.0.1 of the server
+    network_mode: host
+    # Passwords live in a separate file with chmod 600 (see geheim.env.example)
+    env_file: geheim.env
+    environment:
+      - MATRIX_URL=http://127.0.0.1:8008
+      - MATRIX_BENUTZER=@kalenderbot:<server>.<tailnet>.ts.net
+      - ERLAUBTER_BENUTZER=@<du>:<server>.<tailnet>.ts.net
+      - CALDAV_URL=http://127.0.0.1:5232/<benutzer>/
+      - CALDAV_BENUTZER=<benutzer>
+      - OLLAMA_URL=http://127.0.0.1:11434
+      - MODELL=qwen3.5:4b
+    volumes:
+      # Only writable path: stores the bot's session (chmod 600)
+      - /mnt/user/appdata/kalenderbot/daten:/daten
+    restart: unless-stopped

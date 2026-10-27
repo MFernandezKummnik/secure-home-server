@@ -10,9 +10,12 @@ To minimize the attack surface, local services are not exposed directly to the p
 
 * **No Open Inbound Ports:** The router/firewall blocks all unsolicited incoming IPv4/IPv6 traffic. Port forwarding (NAT) is completely disabled.
 * **Encrypted Mesh VPN (Tailscale / WireGuard):** Remote management and access to services (Jellyfin, Navidrome, Unraid WebUI) occur exclusively through an encrypted peer-to-peer overlay network.
-* **Access Control Lists (ACLs):** Tailscale ACL rules strictly segment endpoint access:
-  * Mobile devices (iPhones, Apple TV) are restricted to media streaming ports (`8096`, `4533`).
-  * Administrative access (SSH, Unraid Management UI) is limited to authenticated control devices.
+* **Access Control Lists (ACLs):** Tailscale grants segment endpoint access by device tag (anonymized policy: [`tailscale-acl.example.hujson`](tailscale-acl.example.hujson)):
+  * The smartphone (`tag:mobile`) is restricted to media streaming (`8096`, `4533`), the calendar (`8443`, HTTPS) and the Matrix chat (`8448`, HTTPS).
+  * The E-Ink tablet (`tag:eink`) is restricted to Syncthing (`22000`).
+  * Administrative access (SSH, Unraid Management UI) is limited to untagged control devices of the owner.
+  * **Policy tests** run on every save and reject any change that would open SSH, the management UIs or unencrypted service ports to tagged devices.
+* **Localhost Binding & HTTPS via `tailscale serve`:** The calendar (Radicale) and the chat server (Matrix) listen on `127.0.0.1` only. They are not reachable from the home LAN at all (including IoT devices) and are exposed exclusively inside the tailnet through `tailscale serve`, which terminates HTTPS with a valid `*.ts.net` certificate. Tailscale Funnel (public exposure) is not used.
 * **Application-Level Scoping (Syncthing):** The E-Ink tablet synchronizes exactly two shared folders via Syncthing; no other server data is shared with it.
 
 ---
@@ -33,6 +36,9 @@ To minimize the attack surface, local services are not exposed directly to the p
 | **Ransomware / Malicious Container Writes** | Immutable read-only mounts (`:ro`) for media assets. A separate, versioned backup is planned. |
 | **Single Drive Failure** | Unraid XOR parity (1x 10 TB parity drive) allows recovery of one failed data drive. |
 | **Privilege Escalation** | Execution of containers under restricted non-root Unraid system accounts (`nobody:users`). |
+| **Credential Sniffing on the Home Network** | Calendar and chat bound to localhost; access only via HTTPS through `tailscale serve`. |
+| **Lost or Compromised Smartphone** | Tag-based ACL limits it to four service ports; the device can be removed from the tailnet instantly. |
+| **Password Brute Force (Calendar)** | bcrypt-hashed credentials, 1 s delay after failed logins, connection limit in Radicale. |
 | **Data Leakage in Public Docs** | Zero-trust documentation standard: strict exclusion of internal IP addresses, MAC addresses, or credentials from public git repositories. |
 
 ---

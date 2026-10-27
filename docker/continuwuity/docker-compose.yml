@@ -1,0 +1,29 @@
+services:
+  continuwuity:
+    image: forgejo.ellis.link/continuwuation/continuwuity:latest
+    container_name: continuwuity
+    user: "99:100"
+    environment:
+      # Permanent: part of every user ID (@name:<server_name>)
+      - CONTINUWUITY_SERVER_NAME=<server>.<tailnet>.ts.net
+      - CONTINUWUITY_DATABASE_PATH=/var/lib/continuwuity
+      - CONTINUWUITY_ADDRESS=0.0.0.0
+      - CONTINUWUITY_PORT=8008
+      # Private homeserver: no contact with other Matrix servers
+      - CONTINUWUITY_ALLOW_FEDERATION=false
+      # .well-known "business card" – required by Element X before login
+      - 'CONTINUWUITY_WELL_KNOWN={ client="https://<server>.<tailnet>.ts.net:8448" }'
+    volumes:
+      - /mnt/user/appdata/continuwuity:/var/lib/continuwuity
+    ports:
+      # Bound to localhost only: the only way in is HTTPS via `tailscale serve`
+      - 127.0.0.1:8008:8008
+    restart: unless-stopped
+
+# Encrypted access from the tailnet (run once on the host):
+#   tailscale serve --bg --https=8448 http://127.0.0.1:8008
+#
+# First start prints a one-time registration token (docker logs continuwuity).
+# The first account registered with it becomes server admin; registration is closed afterwards.
+# Additional accounts (e.g. the calendar bot) are created in the admin room:
+#   !admin users create-user <name>

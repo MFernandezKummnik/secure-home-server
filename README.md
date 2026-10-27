@@ -99,6 +99,13 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **Reliability by Design:** One validated model request per section (`done_reason` check, retries), explicit context window, atomic writes, run lock and per-step logging.
 * **E-Ink Delivery:** The newest issue is synced to the Onyx Boox via Syncthing (*Send Only* / *Receive Only*); older issues are removed automatically. Details in [`scripts/zeitung/`](scripts/zeitung/).
 
+### 3.6 Self-Hosted Calendar & Chat Bot (Radicale, Matrix & Ollama)
+
+* **Own Calendar Server:** **Radicale** (CalDAV) replaces cloud calendars. The phone's native calendar app syncs directly with it; the semester schedule is imported as recurring events from a generated `.ics` file.
+* **Private Chat Server:** A **continuwuity** Matrix homeserver with federation disabled, used with the Element X app.
+* **Calendar Bot:** Messages like *"nächste Woche Dienstag Abgabe ALDA"* are parsed by a local LLM into structured fields, the date is calculated deterministically in code, and the event is written via CalDAV after an explicit confirmation. The bot can also list and delete events. Details in [`scripts/kalenderbot/`](scripts/kalenderbot/).
+* **Zero Exposure:** Both services listen on `127.0.0.1` only and are reachable exclusively via HTTPS through `tailscale serve`, with tag-based ACLs per device (see [`docs/security-concept.md`](docs/security-concept.md)).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -106,6 +113,10 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 - [x] Local AI Transcription: Integrating a self-contained Docker container (faster-whisper) for locally processing lecture audio.
 
 - [x] Local AI Newspaper: Weekly news digest generated entirely on my own hardware with Bash and Ollama (see [`scripts/zeitung/`](scripts/zeitung/)).
+
+- [x] Self-Hosted Calendar & Chat: Radicale, a private Matrix homeserver and a local-AI calendar bot (see [`scripts/kalenderbot/`](scripts/kalenderbot/)).
+
+- [ ] Self-Hosted Password Manager: Vaultwarden, reachable only inside the tailnet.
 
 - [ ] Extended Scripting Automation: Creating custom Bash and watchdog scripts for automated backups and folder monitoring.
 
@@ -117,9 +128,9 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docs/`](docs/):** Detailed documentation on hardware architecture, network topology, and security concepts.
 
-* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Faster-Whisper, and administrative tools.
+* **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Faster-Whisper, Radicale, continuwuity (Matrix), and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) and the **calendar bot** (`scripts/kalenderbot/`).
 
 ---
 

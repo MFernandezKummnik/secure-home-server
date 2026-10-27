@@ -1,0 +1,23 @@
+services:
+  radicale:
+    image: tomsquest/docker-radicale:latest
+    container_name: radicale
+    environment:
+      # Run as nobody:users like all other containers on the server
+      - UID=99
+      - GID=100
+    volumes:
+      - /mnt/user/appdata/radicale/data:/data
+      # Config and htpasswd file are read-only for the container
+      - /mnt/user/appdata/radicale/config:/config:ro
+    ports:
+      # Bound to localhost only: the only way in is HTTPS via `tailscale serve`
+      - 127.0.0.1:5232:5232
+    restart: unless-stopped
+
+# Encrypted access from the tailnet (run once on the host):
+#   tailscale serve --bg --https=8443 http://127.0.0.1:5232
+#
+# Create the user file (password hashed with bcrypt, written directly – no copy & paste):
+#   docker run --rm -it -v /mnt/user/appdata/radicale/config:/c httpd:alpine htpasswd -B -c /c/users <username>
+#   chown nobody:users /mnt/user/appdata/radicale/config/users && chmod 600 /mnt/user/appdata/radicale/config/users

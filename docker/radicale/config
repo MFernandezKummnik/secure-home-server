@@ -1,0 +1,27 @@
+# Radicale-Konfiguration
+# Server path: /mnt/user/appdata/radicale/config/config (mounted read-only at /config)
+
+[server]
+# Auf allen Netzwerkschnittstellen im Container lauschen, Port 5232.
+# Erreichbar ist er von außen trotzdem nur über LAN und Tailscale,
+# weil am Router keine Ports freigegeben sind.
+hosts = 0.0.0.0:5232
+
+[auth]
+# Anmeldung mit Benutzername und Passwort aus einer htpasswd-Datei.
+# Die Passwörter liegen dort nur als bcrypt-Hash, nie im Klartext.
+type = htpasswd
+htpasswd_filename = /config/users
+htpasswd_encryption = bcrypt
+
+[rights]
+# Jeder Benutzer sieht und bearbeitet nur seine eigenen Kalender.
+type = owner_only
+
+[storage]
+# Hier landen die Kalender als normale .ics-Dateien.
+filesystem_folder = /data/collections
+
+[web]
+# Einfache Weboberfläche zum Anlegen von Kalendern.
+type = internal
