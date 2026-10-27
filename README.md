@@ -94,11 +94,19 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
   * Audio recordings (e.g., lecture recordings) uploaded from the tablet are detected automatically via folder watch triggers.
   * **n8n Workflow Automation:** Orchestrates the processing pipeline by fetching new audio files, passing them to a self-hosted **Faster-Whisper** container for localized speech-to-text transcription, and saving the generated transcripts alongside the original notes without cloud intervention.
 
+### 3.5 Local AI Weekly Newspaper (Bash & Ollama)
+
+* **Fully Local News Digest:** Every Wednesday at 04:00, a chain of Bash scripts collects the past week's news from RSS/Atom feeds, has a local LLM (**Ollama**, `qwen3.5:9b` on the GTX 1070) write a German weekly newspaper (domestic & foreign policy with impact assessments, cybersecurity & open source, markets), and renders it as a self-contained HTML page with source links.
+* **Reliability by Design:** One validated model request per section (`done_reason` check, retries), explicit context window, atomic writes, run lock and per-step logging.
+* **E-Ink Delivery:** The newest issue is synced to the Onyx Boox via Syncthing (*Send Only* / *Receive Only*); older issues are removed automatically. Details in [`scripts/zeitung/`](scripts/zeitung/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
 
 - [x] Local AI Transcription: Integrating a self-contained Docker container (faster-whisper) for locally processing lecture audio.
+
+- [x] Local AI Newspaper: Weekly news digest generated entirely on my own hardware with Bash and Ollama (see [`scripts/zeitung/`](scripts/zeitung/)).
 
 - [ ] Extended Scripting Automation: Creating custom Bash and watchdog scripts for automated backups and folder monitoring.
 
@@ -112,7 +120,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom scripts and automated pipelines, including the **n8n E-Ink transcription workflow** (`scripts/n8n/`).
+* **[`scripts/`](scripts/):** Custom scripts and automated pipelines, including the **n8n E-Ink transcription workflow** (`scripts/n8n/`) and the **local AI weekly newspaper** (`scripts/zeitung/`).
 
 ---
 

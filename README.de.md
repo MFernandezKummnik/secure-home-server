@@ -94,11 +94,19 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
   * Vom Tablet hochgeladene Audioaufnahmen (z. B. Vorlesungsmitschnitte) werden automatisch erkannt.
   * **n8n Workflow-Automatisierung:** Steuert die Pipeline, holt neue Audiodateien ab, übergibt sie an einen lokal gehosteten **Faster-Whisper**-Container (GPU-beschleunigt via Nvidia GTX 1070) zur Speech-to-Text-Transkription und speichert das Ergebnis direkt im passenden Modulordner.
 
+### 3.5 Lokale KI-Wochenzeitung (Bash & Ollama)
+
+* **Komplett lokaler Nachrichtenüberblick:** Jeden Mittwoch um 04:00 Uhr sammelt eine Kette aus Bash-Skripten die Meldungen der vergangenen Woche aus RSS-/Atom-Feeds, lässt ein lokales Sprachmodell (**Ollama**, `qwen3.5:9b` auf der GTX 1070) daraus eine deutsche Wochenzeitung schreiben (Innen- & Außenpolitik mit Einordnung der Auswirkungen, Cybersecurity & Open Source, Märkte) und baut daraus eine eigenständige HTML-Seite mit Quellenlinks.
+* **Zuverlässigkeit als Grundprinzip:** Eine geprüfte Modellanfrage pro Rubrik (Prüfung von `done_reason`, Wiederholungen), fest gesetztes Kontextfenster, atomares Schreiben, Sperre gegen Doppelstarts und Protokollierung pro Schritt.
+* **Lesen auf dem E-Ink-Tablet:** Die neueste Ausgabe wird per Syncthing auf den Onyx Boox übertragen (*Nur senden* / *Nur empfangen*), ältere Ausgaben werden automatisch entfernt. Details in [`scripts/zeitung/`](scripts/zeitung/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
 
 - [x] Lokale KI-Transkription: Integration eines autarken Docker-Containers (faster-whisper) zur lokalen Aufbereitung von Vorlesungs-Audios.
+
+- [x] Lokale KI-Zeitung: Wöchentlicher Nachrichtenüberblick, komplett auf eigener Hardware mit Bash und Ollama erzeugt (siehe [`scripts/zeitung/`](scripts/zeitung/)).
 
 - [ ] Erweiterte Skript-Automatisierung: Erstellung eigener Bash- und Watchdog-Skripte für automatisierte Backups und Ordner-Überwachungen.
 
@@ -112,7 +120,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, n8n, Faster-Whisper und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Automatisierungsskripte und Pipelines, inklusive des **n8n E-Ink Transkriptions-Workflows** (`scripts/n8n/`).
+* **[`scripts/`](scripts/):** Eigene Automatisierungsskripte und Pipelines, inklusive des **n8n E-Ink Transkriptions-Workflows** (`scripts/n8n/`) und der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`).
 
 ---
 

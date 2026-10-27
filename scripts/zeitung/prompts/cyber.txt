@@ -1,0 +1,7 @@
+Schreibe den Zeitungsteil "Cybersecurity & Open Source" über die vergangene Woche.
+
+- Einige Meldungen sind auf Englisch: Übersetze sie sinngemäß ins Deutsche.
+- Wähle die 4 bis 6 wichtigsten Themen aus (Sicherheitslücken, Angriffe, wichtige Releases oder Entscheidungen in Open-Source-Projekten).
+- Zu jedem Thema ein bis zwei Absätze. Bei Sicherheitslücken: wer betroffen ist und was empfohlen wird, aber nur, wenn es in der Meldung steht.
+- Schließe jedes Thema mit einem kurzen Absatz ab, der mit **Was bedeutet das?** beginnt.
+- Länge insgesamt etwa 700 Wörter.

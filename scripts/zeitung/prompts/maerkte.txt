@@ -1,0 +1,7 @@
+Schreibe den Zeitungsteil "Märkte & Investitionen" über die vergangene Woche.
+
+- Wähle die 3 bis 5 wichtigsten Themen aus (Konjunktur, Zinsen, Unternehmen, Branchen, Rohstoffe).
+- Zu jedem Thema ein bis zwei Absätze: was passiert ist und was es für Märkte und Branchen bedeutet.
+- Schließe mit einem Abschnitt "## Chancen und Risiken im Blick": Welche Entwicklungen und Branchen werden gerade diskutiert, und welche Risiken stehen dem gegenüber? Stelle beide Seiten dar.
+- Gib keine Kauf- oder Verkaufsempfehlungen für einzelne Wertpapiere und keine Kursprognosen.
+- Länge insgesamt etwa 700 Wörter.

@@ -1,0 +1,6 @@
+# Generated at runtime on the server – not part of the repository
+daten/
+ausgabe/
+logs/
+boox/
+.laeuft/
