@@ -109,7 +109,7 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 ### 3.7 Network-Wide DNS Filtering (Pi-hole)
 
 * **Pi-hole** answers the DNS queries of the home network via the router's DHCP settings and forwards to **Quad9** (DNSSEC, malware filter). The admin UI is only reachable inside the tailnet.
-* **Honest result:** it does not remove ad banners on streaming devices and adds nothing in the browser (already covered by Brave); part of the traffic bypasses it via IPv6. It is kept for blocking tracking from apps and IoT devices and for visibility into what each device contacts. Details and lessons learned in [`docker/pihole/`](docker/pihole/).
+* **Honest result:** it does not remove ad banners on streaming devices and adds nothing in the browser (already covered by Brave); part of the traffic bypasses it via IPv6. It does remove **in-app ads on the smartphone** while on the home Wi-Fi, and is kept for that, for blocking tracking from apps and IoT devices, and for visibility into what each device contacts. Details and lessons learned in [`docker/pihole/`](docker/pihole/).
 
 ## 4. Roadmap & Planned Extensions
 

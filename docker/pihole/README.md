@@ -37,6 +37,7 @@ Verification after setup: `nslookup doubleclick.net <server-ip>` → `0.0.0.0`, 
 
 ## What It Is Still Used For
 
+* **In-app ads on the smartphone:** after the switch, ads inside apps on the phone disappeared while it is connected to the home Wi-Fi. This is the clearest benefit, because the browser-based blocker cannot reach ads inside apps. On mobile data the phone uses other DNS servers, so the effect is limited to the home network (see *Possible Next Steps*).
 * **Tracking outside the browser:** apps, smart plugs, smart lights and the streaming stick regularly contact vendor servers. Brave cannot see this traffic; Pi-hole blocks part of it (over IPv4).
 * **Visibility:** the query log shows which device talks to which domain and how often – useful for spotting chatty or suspicious IoT devices.
 * **Malware and phishing filter** for every device through Quad9.
@@ -48,4 +49,4 @@ If the server is down, DNS fails for the whole home network. Mitigation: the ser
 ## Possible Next Steps
 
 * Solve the IPv6 bypass (see above).
-* Use Pi-hole as DNS server of the tailnet so mobile devices are filtered on the go (requires port 53 in the Tailscale ACL for `tag:mobile`; adds some latency on mobile networks).
+* Use Pi-hole as DNS server of the tailnet so mobile devices are filtered on the go, extending the in-app ad blocking to mobile data (requires port 53 in the Tailscale ACL for `tag:mobile`; adds some latency on mobile networks).
