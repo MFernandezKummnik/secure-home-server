@@ -1,6 +1,6 @@
 # Lecture Transcription & Summaries (Whisper + Ollama)
 
-Every night at 02:00 the server picks up lecture recordings that arrived from the E-Ink tablet, transcribes them locally on the GPU, writes a structured study summary with a local LLM, files both into the right course folder and archives the audio. Everything runs on my own hardware; no audio or text leaves the server.
+Every night at 01:00 the server picks up lecture recordings that arrived from the E-Ink tablet, transcribes them locally on the GPU, writes a structured study summary with a local LLM, files both into the right course folder and archives the audio. Everything runs on my own hardware; no audio or text leaves the server.
 
 ```text
 Semester2/mp3Dateien/BeSy 23.10.26.mp3          ← synced from the tablet (Syncthing)
@@ -31,7 +31,7 @@ Semester2/mp3Dateien/BeSy 23.10.26.mp3          ← synced from the tablet (Sync
 
 | Decision | Reasoning |
 | :--- | :--- |
-| **Nightly batch instead of a folder watcher** | The 8 GB GPU is shared with Ollama (newspaper, calendar bot). At night nothing competes, and next-morning results are fast enough for lectures. |
+| **Nightly batch instead of a folder watcher** | The 8 GB GPU is shared with Ollama (newspaper, calendar bot). At night nothing competes, and next-morning results are fast enough for lectures. Starting at 01:00 leaves three hours before the weekly newspaper (Wednesdays 04:00) needs the same GPU. |
 | **Whisper `large-v3` with `int8`** | The GTX 1070 (Pascal) has no efficient `float16`. `int8` runs the most accurate model in ~3.4 GB VRAM. |
 | **VRAM hand-over** | Before transcribing, all loaded Ollama models are unloaded (`keep_alive: 0`); before summarizing, the script waits until Whisper has released its model (`MODEL_IDLE_TIMEOUT`). |
 | **Map-reduce summaries** | A 90-minute lecture (~12,000 words) does not fit into the model's context. Each 2,000-word section is condensed to notes first, then all notes are merged into the final summary. Responses are only accepted with `done_reason: stop` (no truncated text), with up to 3 retries. |
@@ -59,7 +59,7 @@ Semester2/mp3Dateien/BeSy 23.10.26.mp3          ← synced from the tablet (Sync
 | `aliase.conf` | Short names for courses |
 | `prompts/abschnitt.txt` | Prompt: condense one section into notes |
 | `prompts/zusammenfassung.txt` | Prompt: merge notes into the study summary |
-| `user-script.sh` | Unraid *User Scripts* entry, schedule `0 2 * * *` |
+| `user-script.sh` | Unraid *User Scripts* entry, schedule `0 1 * * *` |
 
 ## Setup
 

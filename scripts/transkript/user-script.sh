@@ -1,6 +1,6 @@
 #!/bin/bash
 # Inhalt für Unraid "User Scripts" -> Skript "transkript"
-# Zeitplan: Custom -> 0 2 * * *   (jede Nacht um 02:00)
+# Zeitplan: Custom -> 0 1 * * *   (jede Nacht um 01:00)
 
 docker run --rm \
   --network host \
