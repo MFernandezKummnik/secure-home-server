@@ -27,7 +27,7 @@ Backups/vaultwarden (HDD array, last 30)  ──Syncthing──►  laptop (Rece
 | **Verified before it counts** | The archive is decrypted again and must contain the database; only then is it renamed from `.tmp` to its final name. A failed run leaves no half-written file. |
 | **Retention: last 30 backups** | File names start with the date, so a reverse sort lists the newest first; everything after position 30 is removed. |
 | **No network, minimal mounts** | The container runs with `--network none` as `99:100`; script and passphrase file are mounted read-only. |
-| **Share on the array only** | The `Backups` share has no cache pool, so backups never land on the same SSD as the vault. It is not exported via SMB. |
+| **Share on the array only** | The `Backups` share has no cache pool, so backups never land on the same SSD as the vault. It is exported via SMB only as a hidden, read-only share, so the weekly offline backup (see [`../restic-backup/`](../restic-backup/)) can read it while no client can modify it. |
 | **Off-server copy with versioning** | Syncthing shares the folder *Send Only* → *Receive Only* to the laptop. Sync alone is not a backup: deletions and changes would be mirrored. *Trash can* versioning on the laptop keeps every file removed on the server in `.stversions` for 180 days, and that folder is never synced back. |
 
 Result: three copies (SSD, HDD, laptop) on different hardware, one of them on a separate device.
@@ -49,7 +49,7 @@ Result: three copies (SSD, HDD, laptop) on different hardware, one of them on a 
 ## Setup
 
 ```bash
-# Share "Backups": primary storage Array, no secondary storage, SMB export off
+# Share "Backups": primary storage Array, no secondary storage, SMB export hidden + read-only for all users
 mkdir -p /mnt/user/appdata/vw-backup /mnt/user/Backups/vaultwarden
 # copy backup.sh, Dockerfile, user-script.sh to /mnt/user/appdata/vw-backup
 cd /mnt/user/appdata/vw-backup && docker build -t vw-backup .

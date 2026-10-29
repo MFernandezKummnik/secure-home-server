@@ -117,6 +117,12 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Eigener Tresor:** **Vaultwarden** (Bitwarden-kompatibel) ersetzt den Passwortspeicher des Browsers und wird mit den offiziellen Bitwarden-Apps auf Smartphone, Laptop und PC genutzt. Zero-Knowledge: Einträge werden auf dem Gerät verschlüsselt, der Server speichert nur Chiffretext. Nur innerhalb des Tailnets per HTTPS erreichbar; Registrierung und Admin-Bereich sind deaktiviert. Details in [`docker/vaultwarden/`](docker/vaultwarden/).
 * **Geprüfte nächtliche Backups:** Ein konsistenter SQLite-Schnappschuss wird verschlüsselt (AES-256, eigenes Backup-Passwort), testweise entschlüsselt, auf dem HDD-Array abgelegt und auf den Laptop synchronisiert, wo eine Versionierung gelöschte Backups 180 Tage aufbewahrt. Details und Erkenntnisse in [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/).
 
+### 3.9 Offline-Backups (restic)
+
+* **Zwei Stufen:** Jede Nacht hält das Plugin *Appdata Backup* jeden Container kurz an und archiviert seine Daten zusammen mit dem Unraid-Boot-Stick, damit Datenbanken konsistent gesichert werden. Einmal pro Woche holt ein PowerShell-Skript auf dem PC die Uni-Daten, die Musik und diese Archive mit **restic** auf eine externe HDD, die den Rest der Zeit abgesteckt ist.
+* **Minimale Rechte:** Der PC liest über ein eigenes Unraid-Konto mit reinen Leserechten auf genau fünf Freigaben; die Backup-Freigabe ist für alle Benutzer schreibgeschützt, und `appdata` wird nicht mehr per SMB freigegeben.
+* **Verschlüsselt, dedupliziert, geprüft:** AES-256-verschlüsseltes Repository, 8 Wochen- und 12 Monatsstände, eine Stichprobe von 5 % der Daten bei jedem Lauf und ein Wiederherstellungstest mit übereinstimmendem SHA-256-Hash. Der Test hat einen echten Fehler aufgedeckt (UNC-Pfade lassen sich unter Windows nicht wiederherstellen); Ursache und Lösung stehen in [`scripts/restic-backup/`](scripts/restic-backup/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -133,7 +139,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] Verschlüsselte Backups für den Passwort-Manager: Nächtliche, geprüfte Backups auf das HDD-Array und den Laptop (siehe [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/)).
 
-- [ ] Automatische Backups für die übrigen Daten: Uni-Dokumente und Dienst-Konfigurationen nach demselben Muster, dazu ein vollständiger Wiederherstellungstest.
+- [x] Backups für die übrigen Daten: Nächtliche, konsistente Container-Archive auf dem Server und ein wöchentliches, verschlüsseltes Offline-Backup mit restic, bestätigt durch einen Wiederherstellungstest (siehe [`scripts/restic-backup/`](scripts/restic-backup/)).
 
 - [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
@@ -145,7 +151,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`) und des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
 
 ---
 

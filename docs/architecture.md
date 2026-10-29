@@ -90,6 +90,6 @@ This section documents the explicit architectural trade-offs and alternative com
   * Unraid allows individual drive spin-ups for media playback while maintaining XOR parity protection, saving significant energy during 24/7 operation.
   * Mixed drive sizes are fine: every data drive has its own file system, so reused smaller drives (500 GB, 250 GB) simply add capacity. The parity drive must be at least as large as the largest data drive.
   * **High-water allocation** fills the data drives gradually, so data, including university files, is spread across them. Any write to a data drive also updates the parity drive.
-  * Parity protects against the failure of a single drive. It does **not** protect against accidental deletion, corruption or ransomware, and it is not a backup. The password vault has nightly encrypted backups on the array and an off-server device (see [`scripts/vaultwarden-backup/`](../scripts/vaultwarden-backup/)); a backup for the remaining data is planned (see roadmap in the README).
+  * Parity protects against the failure of a single drive. It does **not** protect against accidental deletion, corruption or ransomware, and it is not a backup. The password vault has nightly encrypted backups on the array and an off-server device (see [`scripts/vaultwarden-backup/`](../scripts/vaultwarden-backup/)); the remaining irreplaceable data is backed up weekly with restic to an external drive (see [`scripts/restic-backup/`](../scripts/restic-backup/)).
 ---
 ```

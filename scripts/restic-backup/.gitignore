@@ -1,0 +1,4 @@
+# never commit the encrypted password file, the restic binary or run logs
+restic-passwort.xml
+restic.exe
+logs/

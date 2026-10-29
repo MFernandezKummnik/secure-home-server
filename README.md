@@ -117,6 +117,12 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **Self-Hosted Vault:** **Vaultwarden** (Bitwarden-compatible) replaces the browser's password storage and is used with the official Bitwarden apps on phone, laptop and PC. Zero-knowledge: entries are encrypted on the client, the server only stores ciphertext. Reachable only inside the tailnet via HTTPS; signups and the admin panel are disabled. Details in [`docker/vaultwarden/`](docker/vaultwarden/).
 * **Verified Nightly Backups:** A consistent SQLite snapshot is encrypted (AES-256, separate passphrase), test-decrypted, stored on the HDD array and synced to the laptop, where versioning keeps deleted backups for 180 days. Details and lessons learned in [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/).
 
+### 3.9 Offline Backups (restic)
+
+* **Two Stages:** Every night the *Appdata Backup* plugin stops each container briefly and archives its data together with the Unraid boot stick, so databases are captured consistently. Once a week a PowerShell script on the PC pulls the university data, music and these archives with **restic** onto an external HDD that stays disconnected the rest of the time.
+* **Least Privilege:** The PC reads through a dedicated Unraid account with read-only access to exactly five shares; the backup share is read-only for every user, and `appdata` is no longer exported via SMB.
+* **Encrypted, Deduplicated, Verified:** AES-256 encrypted repository, 8 weekly and 12 monthly snapshots, a 5 % data sample checked on every run, and a restore test with a matching SHA-256 hash. The restore test exposed a real bug (UNC paths cannot be restored on Windows), which is documented with the fix in [`scripts/restic-backup/`](scripts/restic-backup/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -133,7 +139,7 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [x] Encrypted Backups for the Password Manager: Nightly, verified backups to the HDD array and the laptop (see [`scripts/vaultwarden-backup/`](scripts/vaultwarden-backup/)).
 
-- [ ] Automated Backups for the Remaining Data: University documents and service configurations, following the same pattern; plus a full restore test.
+- [x] Backups for the Remaining Data: Nightly consistent container archives on the server and a weekly encrypted offline backup with restic, verified by a restore test (see [`scripts/restic-backup/`](scripts/restic-backup/)).
 
 - [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
@@ -145,7 +151,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`) and the **Vaultwarden backup** (`scripts/vaultwarden-backup/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
 
 ---
 
