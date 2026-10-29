@@ -9,6 +9,8 @@ The server is engineered for maximum energy efficiency, silent 24/7 operation, a
 * **Motherboard:** Gigabyte B760M DS3H DDR4 GEN5 (Micro-ATX, Intel B760 Express Chipset).
   * **Power Efficiency:** Configured for deep **C-States (C8/C10)** under Linux to minimize idle power draw (~15-20W idle).
   * **Networking:** Integrated Realtek 2.5 GbE LAN interface.
+* **GPU:** Nvidia GeForce GTX 1070 (8 GB, Pascal) for local AI workloads (Ollama, Whisper).
+  * **Driver pinned to the 580 branch (`580.196.07`):** NVIDIA dropped Pascal support with the 590 Linux driver branch; the open-source kernel modules require Turing or newer. The Unraid *Nvidia-Driver* plugin is therefore set to this fixed version instead of *latest* or *Production Branch* (both would eventually move past 580), and GPU-based filtering only offers drivers that support this card. Trade-off: newer 580.x releases have to be selected manually.
 * **Memory:** 32 GB Crucial Pro DDR4-3200 (2x 16 GB, 1.2V JEDEC standard) operating in dual-channel mode.
 * **Cooling & Chassis:** Thermalright Assassin X 120 SE mounted inside a sound-dampened **Fractal Design Define R5** Midi-Tower.
 
@@ -92,4 +94,10 @@ This section documents the explicit architectural trade-offs and alternative com
   * **High-water allocation** fills the data drives gradually, so data, including university files, is spread across them. Any write to a data drive also updates the parity drive.
   * Parity protects against the failure of a single drive. It does **not** protect against accidental deletion, corruption or ransomware, and it is not a backup. The password vault has nightly encrypted backups on the array and an off-server device (see [`scripts/vaultwarden-backup/`](../scripts/vaultwarden-backup/)); the remaining irreplaceable data is backed up weekly with restic to an external drive (see [`scripts/restic-backup/`](../scripts/restic-backup/)).
 ---
-```
+
+## 5. Operations & Maintenance
+
+* **Server DNS is independent of its own containers.** The home network resolves through Pi-hole, but the server itself uses Quad9 (`9.9.9.9`, `149.112.112.112`) as static DNS. *Lesson learned:* after an Unraid update the server used Pi-hole – running on itself – as its resolver. During boot Pi-hole was not up yet, so the Nvidia driver plugin could not download the driver for the new kernel, Unraid moved the plugin to `plugins-error/`, and every GPU container failed to start (`failed to discover GPU vendor from CDI`). A host must never depend on a service that only starts on that host.
+* **After every Unraid update:** check `nvidia-smi`, the GPU containers (Ollama, Whisper) and the Nvidia-Driver plugin page for a newer **580.x** release.
+* **Self-built images** (calendar bot, Vaultwarden backup, newspaper) do not show up in Unraid's container updates; they have to be rebuilt with `docker build --pull` to pick up security fixes of their base images (planned: monthly, ideally automated).
+* **Cleanup routine:** unused appdata folders, container templates and dangling images are identified by comparing what exists with what running containers actually mount (`docker inspect`), archived to the backup share, and only then removed. Short-lived job containers (`docker run --rm`) do not appear in `docker ps -a`, so their folders and images are checked separately.

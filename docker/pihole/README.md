@@ -44,9 +44,12 @@ Verification after setup: `nslookup doubleclick.net <server-ip>` → `0.0.0.0`, 
 
 ## Known Trade-Off
 
-If the server is down, DNS fails for the whole home network. Mitigation: the server runs 24/7 with `restart: unless-stopped`; in an emergency the router's DNS setting is switched back to automatic.
+If the server is down, DNS fails for the whole home network (Pi-hole is a single point of failure). This is noticeable during server reboots and for about a minute during the nightly container backup, which stops each container briefly. Mitigation: the server runs 24/7 with `restart: unless-stopped`; in an emergency the router's DNS setting is switched back to automatic.
+
+The server itself does **not** use Pi-hole: it resolves through Quad9 directly. Using its own container as resolver once broke the GPU driver installation after an update, because nothing could be resolved during boot (details in [`docs/architecture.md`](../../docs/architecture.md#5-operations--maintenance)). A second DNS server in the router is deliberately not configured: clients spread their queries across all listed servers, so part of the traffic would bypass the filter.
 
 ## Possible Next Steps
 
 * Solve the IPv6 bypass (see above).
+* Redundancy: a second Pi-hole on a small separate device (e.g. Raspberry Pi), so DNS keeps working while the server restarts.
 * Use Pi-hole as DNS server of the tailnet so mobile devices are filtered on the go, extending the in-app ad blocking to mobile data (requires port 53 in the Tailscale ACL for `tag:mobile`; adds some latency on mobile networks).
