@@ -31,7 +31,7 @@ The system utilizes Unraid OS's hybrid storage architecture to balance parity pr
 |  - Parity Drive:  1x 10 TB HPE Enterprise HDD (CMR)                     |
 |  - Data Drives:   1x 10 TB HPE Enterprise HDD (CMR)                     |
 |                   1x 500 GB HDD (reused, from a 2012 laptop)            |
-|                   1x 350 GB HDD (reused, from an older desktop PC)      |
+|                   1x 250 GB HDD (reused, from an old receiver)          |
 |  - Allocation:    High-water (data spread across the data drives)       |
 |  - Protected Media Libraries & University Data                          |
 +-------------------------------------------------------------------------+
@@ -88,7 +88,7 @@ This section documents the explicit architectural trade-offs and alternative com
 * **Rationale & Trade-off:**
   * Traditional RAID arrays require all drives to spin up simultaneously during reads, increasing power consumption and thermal load.
   * Unraid allows individual drive spin-ups for media playback while maintaining XOR parity protection, saving significant energy during 24/7 operation.
-  * Mixed drive sizes are fine: every data drive has its own file system, so reused smaller drives (500 GB, 350 GB) simply add capacity. The parity drive must be at least as large as the largest data drive.
+  * Mixed drive sizes are fine: every data drive has its own file system, so reused smaller drives (500 GB, 250 GB) simply add capacity. The parity drive must be at least as large as the largest data drive.
   * **High-water allocation** fills the data drives gradually, so data, including university files, is spread across them. Any write to a data drive also updates the parity drive.
   * Parity protects against the failure of a single drive. It does **not** protect against accidental deletion, corruption or ransomware, and it is not a backup. The password vault has nightly encrypted backups on the array and an off-server device (see [`scripts/vaultwarden-backup/`](../scripts/vaultwarden-backup/)); a backup for the remaining data is planned (see roadmap in the README).
 ---

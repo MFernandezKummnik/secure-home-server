@@ -32,7 +32,7 @@ Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heim
 | **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-Channel (1.2V JEDEC-Standard) für 24/7-Stabilität; bietet ausreichend Puffer für parallele Docker-Container. |
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB-NVMe für maximale I/O-Performance bei Docker-Containern, Appdata-Datenbanken und dem Unraid Inbound-Cache. |
 | **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3,5", CMR) | Paritätsgeschützter Unraid-Storage-Pool (**1x Parity + 1x Data**). CMR-Technologie verhindert Leistungseinbrüche; XOR-Parität schützt vor Festplattenausfall. |
-| **HDDs (Array, wiederverwendet)** | 1x 500 GB (aus einem Laptop von 2012) + 1x 350 GB (aus einem älteren Desktop-PC) | Zusätzliche Data-Platten im selben Array, aus vorhandener Hardware ergänzt. Jede Data-Platte hat ein eigenes Dateisystem; die Parity-Platte (10 TB) ist mindestens so groß wie die größte Data-Platte. Daten, auch die Uni-Dateien, verteilen sich auf die Data-Platten (High-water-Zuteilung). |
+| **HDDs (Array, wiederverwendet)** | 1x 500 GB (aus einem Laptop von 2012) + 1x 250 GB (aus einem alten Receiver) | Zusätzliche Data-Platten im selben Array, aus vorhandener Hardware ergänzt. Jede Data-Platte hat ein eigenes Dateisystem; die Parity-Platte (10 TB) ist mindestens so groß wie die größte Data-Platte. Daten, auch die Uni-Dateien, verteilen sich auf die Data-Platten (High-water-Zuteilung). |
 | **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Slim-Laufwerk, per USB-Adapter angeschlossen; LibreDrive-Kompatibilität zum verlustfreien Auslesen eigener Medien. *Hinweis:* Auslesen rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
 | **Bootmedium** | 32 GB Samsung BAR Plus (USB 3.1) | Schreibgeschützter Unraid-Boot-Stick; robustes Metallgehäuse für optimale Wärmeableitung im 24/7-Dauerbetrieb. |
 | **CPU-Kühler** | Thermalright Assassin X 120 SE | Tower-Kühler mit leisem 120mm PWM-Lüfter; verhindert Thermal Throttling bei dauerhafter CPU-Volllast. |
@@ -61,7 +61,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 |  +--------------------------+   +-----------------------------------+      |
 |  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (4 HDDs)            |      |
 |  |  Docker Appdata &        |-->|  Parity: 10 TB                    |      |
-|  |  Inbound Files           |   |  Data: 10 TB, 500 GB, 350 GB      |      |
+|  |  Inbound Files           |   |  Data: 10 TB, 500 GB, 250 GB      |      |
 |  +--------------------------+   +-----------------------------------+      |
 +----------------------------------------------------------------------------+
 ```

@@ -32,7 +32,7 @@ Repository documenting my self-built, fully cloud-free home server. The system s
 | **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-channel (1.2V JEDEC standard) for 24/7 stability; provides ample headroom for parallel Docker containers. |
 | **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB NVMe for maximum I/O performance for Docker containers, appdata databases, and the Unraid inbound cache. |
 | **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3.5", CMR) | Parity-protected Unraid storage pool (**1x parity + 1x data**). CMR technology prevents performance drops; XOR parity protects against drive failure. |
-| **HDDs (Array, reused)** | 1x 500 GB (from a 2012 laptop) + 1x 350 GB (from an older desktop PC) | Additional data drives in the same array, added from spare hardware. Each data drive has its own file system; the parity drive (10 TB) is at least as large as the largest data drive. Data, including university files, is spread across the data drives (High-water allocation). |
+| **HDDs (Array, reused)** | 1x 500 GB (from a 2012 laptop) + 1x 250 GB (from an old receiver) | Additional data drives in the same array, added from spare hardware. Each data drive has its own file system; the parity drive (10 TB) is at least as large as the largest data drive. Data, including university files, is spread across the data drives (High-water allocation). |
 | **Optical Drive**| LG HLDS BU40N Ultra Slim UHD Burner | Slim drive connected via USB adapter; LibreDrive compatibility for lossless reading of my own media. *Note:* Reading is strictly within the bounds of applicable copyright law (§ 95a UrhG, German copyright act); no circumvention of effective copy-protection mechanisms. |
 | **Boot Media** | 32 GB Samsung BAR Plus (USB 3.1) | Write-protected Unraid boot stick; sturdy metal housing for optimal heat dissipation in 24/7 operation. |
 | **CPU Cooler** | Thermalright Assassin X 120 SE | Tower cooler with a quiet 120mm PWM fan; prevents thermal throttling under sustained full CPU load. |
@@ -61,7 +61,7 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 |  +--------------------------+   +-----------------------------------+      |
 |  |  NVMe CACHE (1 TB)       |   |  PARITY ARRAY (4 HDDs)            |      |
 |  |  Docker Appdata &        |-->|  Parity: 10 TB                    |      |
-|  |  Inbound Files           |   |  Data: 10 TB, 500 GB, 350 GB      |      |
+|  |  Inbound Files           |   |  Data: 10 TB, 500 GB, 250 GB      |      |
 |  +--------------------------+   +-----------------------------------+      |
 +----------------------------------------------------------------------------+
 ```
