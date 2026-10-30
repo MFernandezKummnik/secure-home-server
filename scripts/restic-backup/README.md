@@ -46,6 +46,8 @@ musikRey      ──┘                                 restic check (5 % sample
 | **Integrity check every run** | `check --read-data-subset=5%` reads a random 5 % of the stored data, so over time the whole drive is read and a failing disk shows up early. |
 | **Passwords never in plain text** | SMB credentials are stored in the Windows Credential Manager (`cmdkey`); the restic password is encrypted with Windows DPAPI (`Export-Clixml`) and only usable by my Windows account on this PC. The password is also stored in the password manager and on paper, because the password manager itself is part of the backup. |
 | **Disk found by name, not drive letter** | `Get-Volume -FileSystemLabel BACKUP`; drive letters change with whatever else is plugged in. |
+| **Parent snapshot by host and tag** | `backup --group-by host,tags`: restic compares each file with the previous week's snapshot and skips unchanged ones by size and modification time instead of reading them again over the network. |
+| **Automatic eject at the end** | The script ejects the drive like *Safely Remove Hardware* (via `CM_Request_Device_Eject` in `cfgmgr32.dll`, which needs no admin rights), also after a failed run. If Windows refuses, the run still counts as successful and a warning names the reason. |
 | **restic binary next to the script** | The script does not depend on how a package manager registers programs in `PATH`. |
 | **Drive repurposed from old hardware** | A reused HDD from an old desktop PC (~360 GB), wiped (`diskpart clean`, GPT) and formatted with a **full** format so every sector is written and checked once before trusting it with backups. |
 
@@ -56,14 +58,15 @@ Result, together with the Unraid parity and the Vaultwarden laptop copy: for the
 * **The restore test found a real bug.** The first version backed up UNC paths (`\\REYDESERVER\Semester2`) directly. The backup and `restic check` reported no errors, but restore failed with `invalid child node name \\REYDESERVER\Semester2`: restic on Windows stores the whole UNC root as a *single folder name containing backslashes*, which Windows cannot create. The script now maps the shares as drive letters (`Q:` … `U:`, `net use /persistent:no`) for the duration of the run; restic stores them as plain folders (`/Q`, `/R`, …). **A backup is only proven by a restore.**
 * **Restored files carry the original ACLs.** The files came back with the server's permissions (read-only for my account), so restic could not even set their timestamps, and they could not be deleted. After a restore, `icacls <target> /reset /T` replaces them with normal inherited permissions.
 * **Windows allows one SMB user per server name.** I already use the server's IP for my own account; the backup account therefore uses the host name. Windows treats them as two servers, which avoids error 1219.
-* **Path changes break retention.** restic groups snapshots by their paths for `forget`. The appdata folder is named differently every day (`ab_<date>_<time>`), so without `--group-by host` every snapshot would form its own group and never be deleted.
+* **Path changes break retention and change detection.** restic groups snapshots by their paths, both for `forget` and for choosing the parent snapshot during `backup`. The appdata folder is named differently every day (`ab_<date>_<time>`), so the path list never repeats: without `--group-by host` no snapshot would ever be deleted, and without `--group-by host,tags` on `backup` every run reported `no parent snapshot found` and re-read every file. Deduplication still kept the repository small, so this only showed up as slow runs – noticed on the second weekly run.
+* **Ejecting without admin rights.** `Set-Disk -IsOffline` needs an elevated shell, which would break the per-user credentials (`cmdkey`) and the DPAPI-encrypted password. The Configuration Manager API that Explorer uses works for a normal user; the script ejects the USB-SATA adapter (the disk's parent device) first and falls back to the disk itself.
 * **The backup audit found unrelated problems.** Measuring what to back up revealed 140 GB of duplicate uploads in open-webui (a broken sync job had re-uploaded the same lecture files for two weeks) and three mounts that still gave open-webui read-write access to my university shares. Both were cleaned up before the first backup.
 
 ## Files
 
 | File | Purpose |
 | :--- | :--- |
-| `backup.ps1` | Map shares, back up, apply retention, check a sample, unmap shares, log |
+| `backup.ps1` | Map shares, back up, apply retention, check a sample, unmap shares, eject the drive, log |
 | `Backup starten.cmd` | Double-click launcher (`-ExecutionPolicy Bypass` for this one call only) |
 | `.gitignore` | Keeps the encrypted password file, the restic binary and logs out of git |
 
@@ -84,7 +87,7 @@ Read-Host "restic-Passwort" -AsSecureString | Export-Clixml C:\Backup\restic-pas
 $env:RESTIC_REPOSITORY = "G:\restic-repo"
 C:\Backup\restic.exe init
 ```
-Then run `Backup starten.cmd` once a week.
+Then run `Backup starten.cmd` once a week; when it reports that the drive was ejected, switch it off and unplug it.
 
 ## Restore
 

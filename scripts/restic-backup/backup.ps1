@@ -10,6 +10,7 @@
       5. Neuen Snapshot erstellen
       6. Alte Snapshots nach Aufbewahrungsregel aufraeumen
       7. Stichprobe der Daten auf der Platte pruefen
+      8. Netzlaufwerke trennen und die Platte sicher auswerfen
 
     Entstanden mit KI-Hilfe (Claude); jede Zeile ist kommentiert und nachvollzogen.
 #>
@@ -36,6 +37,9 @@ $Laufwerke = [ordered]@{
     'U:' = 'Backups'
 }
 
+# Platte am Ende automatisch auswerfen ("Hardware sicher entfernen"), damit sie abgesteckt werden kann
+$Auswerfen = $true
+
 # Aufbewahrung: die letzten 8 Wochen + je ein Stand pro Monat fuer 12 Monate
 $BehalteWochen = 8
 $BehalteMonate = 12
@@ -61,6 +65,66 @@ function Invoke-Restic {
         throw "restic $($Argumente[0]) ist mit Exit-Code $LASTEXITCODE fehlgeschlagen."
     }
     return $LASTEXITCODE
+}
+
+# Hilfsfunktion: externe Platte so auswerfen wie "Hardware sicher entfernen".
+# Windows bietet dafuer kein PowerShell-Cmdlet ohne Adminrechte, aber die
+# Systembibliothek cfgmgr32.dll hat genau die Funktion, die Explorer selbst benutzt.
+function Invoke-Auswerfen {
+    param([string]$Buchstabe)   # z. B. "G"
+
+    # C#-Bruecke zu cfgmgr32.dll nur einmal pro Sitzung laden
+    if (-not ('Auswurf' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+
+public static class Auswurf {
+    // Geraete-ID (z. B. "USB\VID_...") -> interne Geraetenummer (DevInst)
+    [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)]
+    static extern int CM_Locate_DevNodeW(out uint devInst, string deviceId, int flags);
+
+    // Geraet sicher entfernen; meldet zurueck, falls Windows es verweigert ("Veto")
+    [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)]
+    static extern int CM_Request_Device_EjectW(uint devInst, out int vetoType,
+                                               StringBuilder vetoName, int nameLength, int flags);
+
+    // Gibt null zurueck, wenn es geklappt hat, sonst eine Beschreibung des Problems
+    public static string Auswerfen(string deviceId) {
+        uint devInst;
+        int r = CM_Locate_DevNodeW(out devInst, deviceId, 0);
+        if (r != 0) return "Geraet nicht gefunden (Code " + r + ")";
+
+        var vetoName = new StringBuilder(260);
+        int vetoType;
+        r = CM_Request_Device_EjectW(devInst, out vetoType, vetoName, vetoName.Capacity, 0);
+        if (r != 0) return "Auswerfen fehlgeschlagen (Code " + r + ")";
+        if (vetoType != 0) return "von Windows verweigert, Grund " + vetoType + ": " + vetoName;
+        return null;
+    }
+}
+'@
+    }
+
+    # Vom Laufwerksbuchstaben zur physischen Platte: Laufwerk -> Partition -> Festplatte
+    $Lw        = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$($Buchstabe):'"
+    $Partition = Get-CimAssociatedInstance -InputObject $Lw -ResultClassName Win32_DiskPartition
+    $Platte    = Get-CimAssociatedInstance -InputObject $Partition -ResultClassName Win32_DiskDrive
+    if (-not $Platte) { return "Platte zu $($Buchstabe): nicht gefunden" }
+
+    # Kandidaten: zuerst das uebergeordnete Geraet (der USB-SATA-Adapter), dann die Platte selbst
+    $PlattenId = $Platte.PNPDeviceID
+    $ElternId  = (Get-PnpDeviceProperty -InstanceId $PlattenId -KeyName 'DEVPKEY_Device_Parent' `
+                  -ErrorAction SilentlyContinue).Data
+
+    $Meldung = $null
+    foreach ($Id in @($ElternId, $PlattenId)) {
+        if (-not $Id) { continue }
+        $Meldung = [Auswurf]::Auswerfen($Id)
+        if ($null -eq $Meldung) { return $null }   # geklappt
+    }
+    return $Meldung
 }
 
 try {
@@ -145,7 +209,10 @@ try {
     # -----------------------------------------------------------------------
     # Exit-Code 3 = Snapshot erstellt, aber einzelne Dateien waren nicht lesbar -> Warnung, kein Abbruch
     Write-Host "`n=== Backup ==="
-    $Code = Invoke-Restic -Argumente (@('backup', '--tag', 'woechentlich') + $Quellen) -ErlaubteCodes @(0, 3)
+    # --group-by host,tags: den Vorgaenger-Snapshot ("Parent") nach Rechner und Tag suchen statt nach
+    # den Pfaden. Der appdata-Ordner heisst jeden Tag anders, nach Pfaden gaebe es nie einen Parent,
+    # und restic muesste jedes Mal alle Dateien neu lesen statt unveraenderte zu ueberspringen.
+    $Code = Invoke-Restic -Argumente (@('backup', '--tag', 'woechentlich', '--group-by', 'host,tags') + $Quellen) -ErlaubteCodes @(0, 3)
     if ($Code -eq 3) { Write-Warning 'Einige Dateien konnten nicht gelesen werden. Details stehen oben im Log.' }
 
     # -----------------------------------------------------------------------
@@ -177,6 +244,22 @@ finally {
     # Passwort und Repository wieder aus den Umgebungsvariablen entfernen
     Remove-Item Env:RESTIC_PASSWORD   -ErrorAction SilentlyContinue
     Remove-Item Env:RESTIC_REPOSITORY -ErrorAction SilentlyContinue
+
+    # Platte sicher auswerfen (auch nach einem Fehler, solange sie gefunden wurde).
+    # Ein Problem dabei laesst das Backup NICHT als fehlgeschlagen gelten.
+    if ($Auswerfen -and $Volume -and $Volume.DriveLetter) {
+        try {
+            $Problem = Invoke-Auswerfen -Buchstabe $Volume.DriveLetter
+            if ($null -eq $Problem) {
+                Write-Host "Platte ausgeworfen. Du kannst sie jetzt ausschalten und abstecken." -ForegroundColor Green
+            } else {
+                Write-Warning "Platte konnte nicht ausgeworfen werden: $Problem"
+                Write-Warning "Bitte ueber 'Hardware sicher entfernen' auswerfen, bevor du sie absteckst."
+            }
+        } catch {
+            Write-Warning "Platte konnte nicht ausgeworfen werden: $($_.Exception.Message)"
+        }
+    }
     Stop-Transcript | Out-Null
     Write-Host "Log: $LogDatei"
 }
