@@ -95,7 +95,7 @@ docker run --rm --network host --env-file briefing.env \
 
 * **`127.0.0.1` inside a container is the container.** Both services are bound to the host's loopback interface on purpose, so a container on the default bridge network cannot reach them. `--network host` solves this without publishing the ports.
 * **A placeholder in an invite is not harmless text.** Inviting `@rey:XXXX` made the homeserver treat `XXXX` as a remote server and fail with a federation error. The server name is now read from `/account/whoami` instead of typed by hand.
-* **Keywords need to match how events are actually named.** The first real run showed a "Besy Aufgabe" that the default keyword list did not recognise as a deadline; the list is configurable for that reason.
+* **"Aufgabe" is deliberately not a deadline.** The first real run listed "Besy Aufgabe" only under today, not in the deadline preview. That is intended: an *Aufgabe* is something to work on, an *Abgabe* is something to hand in. Only hand-ins are announced days ahead; the keyword list stays configurable for other naming habits.
 
 ## Transparency Note
 
