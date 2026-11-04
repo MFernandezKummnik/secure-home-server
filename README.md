@@ -129,6 +129,12 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **The one deliberate cloud exception:** I first built it with local AI (`qwen3.5:9b` via Ollama) and tuned the prompt over five versions, checking every card against the slides. The results were not good enough: 0–2 factual errors per deck and core definitions randomly missing, which is risky when the cards are what you learn from. Claude Sonnet via the Anthropic API produced error-free, complete cards on the first try. At about **$0.09 per lecture, roughly $4.50 per semester**, the cost is more than justifiable. Only slide text (course material, no personal data) leaves the server; a prepaid API balance without auto-recharge caps the cost.
 * **Reliability:** Enforced JSON schema, retries on truncated or refused responses, atomic writes, run lock, and a code-level filter for rules the model may ignore. Details, the full local-vs-cloud comparison and lessons learned in [`scripts/karteikarten/`](scripts/karteikarten/).
 
+### 3.11 Job Alert Bot (Python, IMAP & Matrix)
+
+* **Job Search Without Checking Portals:** LinkedIn job alerts for working-student positions are forwarded to a separate bot inbox. Every 30 minutes a short-lived Python container reads them via IMAP and posts each new position to a private Matrix room: one push per alert, one bubble per position with a clean link (tracking and login tokens removed).
+* **Least Privilege:** The bot never gets access to my main inbox; a Gmail filter forwards only mails from the exact alert sender. No scraping: the portals' own e-mail alerts are used, which is reliable and within their terms of use.
+* **Lessons learned:** The first version relied on "unread" mails and silently skipped a mail that had been opened by hand. It now looks at the last 3 days and deduplicates by job ID. Details in [`scripts/jobbot/`](scripts/jobbot/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -149,6 +155,8 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [x] Flashcards from Lecture Slides: Nightly Anki decks from lecture PDFs; local AI tested first, switched to the Claude API for card quality at about $4.50 per semester (see [`scripts/karteikarten/`](scripts/karteikarten/)).
 
+- [x] Job Alert Bot: Job alerts from LinkedIn as Matrix messages on the phone, deduplicated and without tracking links (see [`scripts/jobbot/`](scripts/jobbot/)). Indeed parser still open.
+
 - [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository Structure
@@ -159,7 +167,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **flashcards from lecture slides** (`scripts/karteikarten/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **flashcards from lecture slides** (`scripts/karteikarten/`), the **job alert bot** (`scripts/jobbot/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
 
 ---
 

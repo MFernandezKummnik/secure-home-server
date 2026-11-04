@@ -129,6 +129,12 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Die eine bewusste Cloud-Ausnahme:** Zuerst habe ich es mit lokaler KI umgesetzt (`qwen3.5:9b` über Ollama) und den Prompt in fünf Versionen verbessert, wobei ich jede Karte mit den Folien abgeglichen habe. Das Ergebnis war nicht zufriedenstellend: 0–2 inhaltliche Fehler pro Foliensatz und zufällig fehlende Kerndefinitionen – riskant, wenn man mit genau diesen Karten lernt. Claude Sonnet über die Anthropic-API lieferte schon im ersten Versuch fehlerfreie, vollständige Karten. Bei etwa **0,09 $ pro Vorlesung, rund 4,50 $ pro Semester** ist der Preis mehr als vertretbar. Nur der Folientext (Lehrmaterial, keine persönlichen Daten) verlässt den Server; ein Prepaid-Guthaben ohne automatisches Aufladen begrenzt die Kosten.
 * **Zuverlässigkeit:** Erzwungenes JSON-Schema, Wiederholungen bei abgeschnittenen oder abgelehnten Antworten, atomares Schreiben, Sperre gegen Doppelstart und ein Filter im Code für Regeln, an die sich das Modell nicht hält. Details, der vollständige Vergleich lokal gegen Cloud und Erkenntnisse in [`scripts/karteikarten/`](scripts/karteikarten/).
 
+### 3.11 Job-Benachrichtigungs-Bot (Python, IMAP & Matrix)
+
+* **Jobsuche ohne Portale abzuklappern:** LinkedIn-Jobbenachrichtigungen für Werkstudentenstellen werden an ein eigenes Bot-Postfach weitergeleitet. Alle 30 Minuten liest ein kurzlebiger Python-Container sie per IMAP aus und schickt jede neue Stelle in einen privaten Matrix-Raum: eine Push-Benachrichtigung pro Alert, eine Sprechblase pro Stelle mit sauberem Link (Tracking und Anmelde-Token entfernt).
+* **Minimale Rechte:** Der Bot bekommt nie Zugriff auf mein Hauptpostfach; ein Gmail-Filter leitet nur Mails vom genauen Absender der Alerts weiter. Kein Scraping: Genutzt werden die eigenen E-Mail-Alerts der Portale, das ist zuverlässig und mit deren Nutzungsbedingungen vereinbar.
+* **Erkenntnisse:** Die erste Version suchte nur ungelesene Mails und übersprang still eine Mail, die ich von Hand geöffnet hatte. Jetzt schaut der Bot die letzten 3 Tage an und erkennt Doppelte an der Stellen-ID. Details in [`scripts/jobbot/`](scripts/jobbot/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -149,6 +155,8 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] Karteikarten aus Vorlesungsfolien: Nächtliche Anki-Stapel aus Vorlesungs-PDFs; zuerst mit lokaler KI getestet, wegen der Kartenqualität auf die Claude-API gewechselt, bei etwa 4,50 $ pro Semester (siehe [`scripts/karteikarten/`](scripts/karteikarten/)).
 
+- [x] Job-Benachrichtigungs-Bot: LinkedIn-Jobbenachrichtigungen als Matrix-Nachrichten aufs Handy, ohne Doppelte und ohne Tracking-Links (siehe [`scripts/jobbot/`](scripts/jobbot/)). Auswerter für Indeed noch offen.
+
 - [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository-Struktur
@@ -159,7 +167,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), der **Karteikarten aus Vorlesungsfolien** (`scripts/karteikarten/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), der **Karteikarten aus Vorlesungsfolien** (`scripts/karteikarten/`), des **Job-Benachrichtigungs-Bots** (`scripts/jobbot/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
 
 ---
 
