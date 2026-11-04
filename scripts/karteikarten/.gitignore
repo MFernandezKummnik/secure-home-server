@@ -1,0 +1,7 @@
+# Created at runtime on the server
+daten/
+logs/
+.laeuft/
+__pycache__/
+# API key for the optional cloud model – never commit
+geheim.env

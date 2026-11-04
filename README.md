@@ -123,6 +123,12 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **Least Privilege:** The PC reads through a dedicated Unraid account with read-only access to exactly five shares; the backup share is read-only for every user, and `appdata` is no longer exported via SMB.
 * **Encrypted, Deduplicated, Verified:** AES-256 encrypted repository, 8 weekly and 12 monthly snapshots, a 5 % data sample checked on every run, and a restore test with a matching SHA-256 hash. The restore test exposed a real bug (UNC paths cannot be restored on Windows), which is documented with the fix in [`scripts/restic-backup/`](scripts/restic-backup/).
 
+### 3.10 Flashcards from Lecture Slides (Python & Claude API)
+
+* **Slides to Anki:** Every evening the server turns new lecture slides (PDF) into one Anki package per lecture, which syncs to the Onyx Boox and is imported into AnkiDroid after a quick review. Stable card IDs mean an updated slide deck updates existing cards instead of duplicating them, so learning progress is kept.
+* **The one deliberate cloud exception:** I first built it with local AI (`qwen3.5:9b` via Ollama) and tuned the prompt over five versions, checking every card against the slides. The results were not good enough: 0–2 factual errors per deck and core definitions randomly missing, which is risky when the cards are what you learn from. Claude Sonnet via the Anthropic API produced error-free, complete cards on the first try. At about **$0.09 per lecture, roughly $4.50 per semester**, the cost is more than justifiable. Only slide text (course material, no personal data) leaves the server; a prepaid API balance without auto-recharge caps the cost.
+* **Reliability:** Enforced JSON schema, retries on truncated or refused responses, atomic writes, run lock, and a code-level filter for rules the model may ignore. Details, the full local-vs-cloud comparison and lessons learned in [`scripts/karteikarten/`](scripts/karteikarten/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -141,6 +147,8 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [x] Backups for the Remaining Data: Nightly consistent container archives on the server and a weekly encrypted offline backup with restic, verified by a restore test (see [`scripts/restic-backup/`](scripts/restic-backup/)).
 
+- [x] Flashcards from Lecture Slides: Nightly Anki decks from lecture PDFs; local AI tested first, switched to the Claude API for card quality at about $4.50 per semester (see [`scripts/karteikarten/`](scripts/karteikarten/)).
+
 - [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository Structure
@@ -151,7 +159,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **flashcards from lecture slides** (`scripts/karteikarten/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
 
 ---
 

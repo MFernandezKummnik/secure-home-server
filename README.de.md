@@ -123,6 +123,12 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Minimale Rechte:** Der PC liest über ein eigenes Unraid-Konto mit reinen Leserechten auf genau fünf Freigaben; die Backup-Freigabe ist für alle Benutzer schreibgeschützt, und `appdata` wird nicht mehr per SMB freigegeben.
 * **Verschlüsselt, dedupliziert, geprüft:** AES-256-verschlüsseltes Repository, 8 Wochen- und 12 Monatsstände, eine Stichprobe von 5 % der Daten bei jedem Lauf und ein Wiederherstellungstest mit übereinstimmendem SHA-256-Hash. Der Test hat einen echten Fehler aufgedeckt (UNC-Pfade lassen sich unter Windows nicht wiederherstellen); Ursache und Lösung stehen in [`scripts/restic-backup/`](scripts/restic-backup/).
 
+### 3.10 Karteikarten aus Vorlesungsfolien (Python & Claude-API)
+
+* **Folien zu Anki:** Jeden Abend macht der Server aus neuen Vorlesungsfolien (PDF) ein Anki-Paket pro Vorlesung. Es wird auf das Onyx Boox synchronisiert und nach kurzer Durchsicht in AnkiDroid importiert. Feste Karten-IDs sorgen dafür, dass eine überarbeitete Foliensammlung vorhandene Karten aktualisiert statt sie zu verdoppeln; der Lernstand bleibt erhalten.
+* **Die eine bewusste Cloud-Ausnahme:** Zuerst habe ich es mit lokaler KI umgesetzt (`qwen3.5:9b` über Ollama) und den Prompt in fünf Versionen verbessert, wobei ich jede Karte mit den Folien abgeglichen habe. Das Ergebnis war nicht zufriedenstellend: 0–2 inhaltliche Fehler pro Foliensatz und zufällig fehlende Kerndefinitionen – riskant, wenn man mit genau diesen Karten lernt. Claude Sonnet über die Anthropic-API lieferte schon im ersten Versuch fehlerfreie, vollständige Karten. Bei etwa **0,09 $ pro Vorlesung, rund 4,50 $ pro Semester** ist der Preis mehr als vertretbar. Nur der Folientext (Lehrmaterial, keine persönlichen Daten) verlässt den Server; ein Prepaid-Guthaben ohne automatisches Aufladen begrenzt die Kosten.
+* **Zuverlässigkeit:** Erzwungenes JSON-Schema, Wiederholungen bei abgeschnittenen oder abgelehnten Antworten, atomares Schreiben, Sperre gegen Doppelstart und ein Filter im Code für Regeln, an die sich das Modell nicht hält. Details, der vollständige Vergleich lokal gegen Cloud und Erkenntnisse in [`scripts/karteikarten/`](scripts/karteikarten/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -141,6 +147,8 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] Backups für die übrigen Daten: Nächtliche, konsistente Container-Archive auf dem Server und ein wöchentliches, verschlüsseltes Offline-Backup mit restic, bestätigt durch einen Wiederherstellungstest (siehe [`scripts/restic-backup/`](scripts/restic-backup/)).
 
+- [x] Karteikarten aus Vorlesungsfolien: Nächtliche Anki-Stapel aus Vorlesungs-PDFs; zuerst mit lokaler KI getestet, wegen der Kartenqualität auf die Claude-API gewechselt, bei etwa 4,50 $ pro Semester (siehe [`scripts/karteikarten/`](scripts/karteikarten/)).
+
 - [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository-Struktur
@@ -151,7 +159,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), der **Karteikarten aus Vorlesungsfolien** (`scripts/karteikarten/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
 
 ---
 
