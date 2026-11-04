@@ -135,6 +135,12 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 * **Least Privilege:** The bot never gets access to my main inbox; a Gmail filter forwards only mails from the exact alert sender. No scraping: the portals' own e-mail alerts are used, which is reliable and within their terms of use.
 * **Lessons learned:** The first version relied on "unread" mails and silently skipped a mail that had been opened by hand. It now looks at the last 3 days and deduplicates by job ID. Details in [`scripts/jobbot/`](scripts/jobbot/).
 
+### 3.12 Morning Briefing (Python, CalDAV & Matrix)
+
+* **One Message Before Getting Up:** Every morning at 05:00 a short-lived container reads today's events and the deadlines of the next 7 days from Radicale, adds the local weather forecast with a rain and frost hint (Open-Meteo, no account or key), and posts it to a private Matrix room. On Wednesdays it also checks that the new newspaper issue has reached the folder synced to the Boox.
+* **Deliberately Simple:** A fixed template instead of an LLM, so nothing can be invented and nothing costs money. Each section fails on its own: if the weather API is down, the calendar still arrives.
+* **Separate Credentials:** Sent as the calendar bot, but through its own login and token, so it can be revoked without affecting the bot. Details in [`scripts/morgenbriefing/`](scripts/morgenbriefing/).
+
 ## 4. Roadmap & Planned Extensions
 
 - [x] E-Ink Pad Automation: Setting up wireless document synchronization (Syncthing / OPDS) for the Onyx Boox writing tablet.
@@ -157,6 +163,8 @@ The system uses **Unraid OS** as its host operating system (stateless boot conce
 
 - [x] Job Alert Bot: Job alerts from LinkedIn as Matrix messages on the phone, deduplicated and without tracking links (see [`scripts/jobbot/`](scripts/jobbot/)). Indeed parser still open.
 
+- [x] Morning Briefing: Daily Matrix message with today's events, upcoming deadlines and the weather (see [`scripts/morgenbriefing/`](scripts/morgenbriefing/)).
+
 - [x] Network Hardening: Configuration of Zero-Trust access control lists (Tailscale ACLs) to isolate mobile devices (see [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository Structure
@@ -167,7 +175,7 @@ The subfolders contain the specific configurations and in-depth documentation:
 
 * **[`docker/`](docker/):** Modularly organized Docker Compose files for Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden, and administrative tools.
 
-* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **flashcards from lecture slides** (`scripts/karteikarten/`), the **job alert bot** (`scripts/jobbot/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
+* **[`scripts/`](scripts/):** Custom Bash scripts and automated pipelines, including the **local AI weekly newspaper** (`scripts/zeitung/`) the **calendar bot** (`scripts/kalenderbot/`), the **lecture transcription** (`scripts/transkript/`), the **flashcards from lecture slides** (`scripts/karteikarten/`), the **job alert bot** (`scripts/jobbot/`), the **morning briefing** (`scripts/morgenbriefing/`), the **Vaultwarden backup** (`scripts/vaultwarden-backup/`) and the **offline backup with restic** (`scripts/restic-backup/`).
 
 ---
 

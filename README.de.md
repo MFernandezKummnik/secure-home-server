@@ -135,6 +135,12 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 * **Minimale Rechte:** Der Bot bekommt nie Zugriff auf mein Hauptpostfach; ein Gmail-Filter leitet nur Mails vom genauen Absender der Alerts weiter. Kein Scraping: Genutzt werden die eigenen E-Mail-Alerts der Portale, das ist zuverlässig und mit deren Nutzungsbedingungen vereinbar.
 * **Erkenntnisse:** Die erste Version suchte nur ungelesene Mails und übersprang still eine Mail, die ich von Hand geöffnet hatte. Jetzt schaut der Bot die letzten 3 Tage an und erkennt Doppelte an der Stellen-ID. Details in [`scripts/jobbot/`](scripts/jobbot/).
 
+### 3.12 Morgenbriefing (Python, CalDAV & Matrix)
+
+* **Eine Nachricht vor dem Aufstehen:** Jeden Morgen um 05:00 Uhr liest ein kurzlebiger Container die heutigen Termine und die Abgaben der nächsten 7 Tage aus Radicale, ergänzt die Wettervorhersage für den Ort mit Regen- und Frosthinweis (Open-Meteo, ohne Konto und Schlüssel) und schickt alles in einen privaten Matrix-Raum. Mittwochs prüft es zusätzlich, ob die neue Zeitungsausgabe im Ordner angekommen ist, der auf das Boox synchronisiert wird.
+* **Bewusst einfach:** Eine feste Vorlage statt eines Sprachmodells, damit nichts erfunden wird und nichts Geld kostet. Jeder Abschnitt scheitert für sich allein: Fällt die Wetter-API aus, kommen die Termine trotzdem an.
+* **Eigene Zugangsdaten:** Gesendet wird als Kalender-Bot, aber über einen eigenen Login mit eigenem Token, der sich abmelden lässt, ohne den Bot zu stören. Details in [`scripts/morgenbriefing/`](scripts/morgenbriefing/).
+
 ## 4. Roadmap & Geplante Erweiterungen
 
 - [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
@@ -157,6 +163,8 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] Job-Benachrichtigungs-Bot: LinkedIn-Jobbenachrichtigungen als Matrix-Nachrichten aufs Handy, ohne Doppelte und ohne Tracking-Links (siehe [`scripts/jobbot/`](scripts/jobbot/)). Auswerter für Indeed noch offen.
 
+- [x] Morgenbriefing: Tägliche Matrix-Nachricht mit den heutigen Terminen, anstehenden Abgaben und dem Wetter (siehe [`scripts/morgenbriefing/`](scripts/morgenbriefing/)).
+
 - [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository-Struktur
@@ -167,7 +175,7 @@ In den Unterordnern befinden sich die spezifischen Konfigurationen und tiefgehen
 
 * **[`docker/`](docker/):** Modular gegliederte Docker-Compose-Dateien für Jellyfin, Navidrome, Tdarr, Whisper, Radicale, continuwuity (Matrix), Pi-hole, Vaultwarden und Admin-Tools.
 
-* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), der **Karteikarten aus Vorlesungsfolien** (`scripts/karteikarten/`), des **Job-Benachrichtigungs-Bots** (`scripts/jobbot/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
+* **[`scripts/`](scripts/):** Eigene Bash-Skripte und automatisierte Pipelines, inklusive der **lokalen KI-Wochenzeitung** (`scripts/zeitung/`) des **Kalender-Bots** (`scripts/kalenderbot/`), der **Vorlesungs-Transkription** (`scripts/transkript/`), der **Karteikarten aus Vorlesungsfolien** (`scripts/karteikarten/`), des **Job-Benachrichtigungs-Bots** (`scripts/jobbot/`), des **Morgenbriefings** (`scripts/morgenbriefing/`), des **Vaultwarden-Backups** (`scripts/vaultwarden-backup/`) und des **Offline-Backups mit restic** (`scripts/restic-backup/`).
 
 ---
 
