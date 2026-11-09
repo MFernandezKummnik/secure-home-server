@@ -2,12 +2,11 @@
 
 ## 1. Hardware Overview & Compute Tier
 
-The server is engineered for maximum energy efficiency, silent 24/7 operation, and high I/O throughput.
+The server is built to run quietly 24/7 at low cost, with room for drives and a GPU for local AI.
 
 * **CPU:** Intel Core i3-12100 (4 Cores / 8 Threads, 3.30 GHz base, 4.30 GHz boost).
   * **iGPU:** Intel UHD Graphics 730 featuring **Intel QuickSync Video** for hardware-accelerated H.264/HEVC/VP9/AV1 decoding and encoding.
 * **Motherboard:** Gigabyte B760M DS3H DDR4 GEN5 (Micro-ATX, Intel B760 Express Chipset).
-  * **Power Efficiency:** Configured for deep **C-States (C8/C10)** under Linux to minimize idle power draw (~15-20W idle).
   * **Networking:** Integrated Realtek 2.5 GbE LAN interface.
 * **GPU:** Nvidia GeForce GTX 1070 (8 GB, Pascal) for local AI workloads (Ollama, Whisper).
   * **Driver pinned to the 580 branch (`580.196.07`):** NVIDIA dropped Pascal support with the 590 Linux driver branch; the open-source kernel modules require Turing or newer. The Unraid *Nvidia-Driver* plugin is therefore set to this fixed version instead of *latest* or *Production Branch* (both would eventually move past 580), and GPU-based filtering only offers drivers that support this card. Trade-off: newer 580.x releases have to be selected manually.
@@ -99,5 +98,6 @@ This section documents the explicit architectural trade-offs and alternative com
 
 * **Server DNS is independent of its own containers.** The home network resolves through Pi-hole, but the server itself uses Quad9 (`9.9.9.9`, `149.112.112.112`) as static DNS. *Lesson learned:* after an Unraid update the server used Pi-hole – running on itself – as its resolver. During boot Pi-hole was not up yet, so the Nvidia driver plugin could not download the driver for the new kernel, Unraid moved the plugin to `plugins-error/`, and every GPU container failed to start (`failed to discover GPU vendor from CDI`). A host must never depend on a service that only starts on that host.
 * **After every Unraid update:** check `nvidia-smi`, the GPU containers (Ollama, Whisper) and the Nvidia-Driver plugin page for a newer **580.x** release.
+* **Image versions (`:latest`):** Third-party images follow `:latest` on purpose: it is a single-user homelab, and staying current matters more for security fixes than reproducible versions. Updates are not installed automatically but through Unraid's Docker page, one container at a time, so a broken update is noticed right away and can be traced to one container. Before updating Vaultwarden, the nightly encrypted backup is checked. Trade-off: no fixed version to roll back to; if an update breaks something, the previous version has to be selected by its tag manually.
 * **Self-built images** (calendar bot, Vaultwarden backup, newspaper) do not show up in Unraid's container updates; they have to be rebuilt with `docker build --pull` to pick up security fixes of their base images (planned: monthly, ideally automated).
 * **Cleanup routine:** unused appdata folders, container templates and dangling images are identified by comparing what exists with what running containers actually mount (`docker inspect`), archived to the backup share, and only then removed. Short-lived job containers (`docker run --rm`) do not appear in `docker ps -a`, so their folders and images are checked separately.

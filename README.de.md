@@ -3,54 +3,53 @@
 [ English ](README.md) | [ **Deutsch** ](README.de.md)
 
 [![OS: Linux / Unraid](https://img.shields.io/badge/OS-Unraid_Linux-orange.svg)](https://unraid.net/)
-[![Security: Zero Trust](https://img.shields.io/badge/Security-Zero_Trust-emerald.svg)]()
 [![Stack: Docker](https://img.shields.io/badge/Stack-Docker_%7C_Jellyfin_%7C_Tdarr-brightgreen.svg)]()
 
-Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heimservers. Das System dient als zentrale Infrastruktur für Datenhaltung mit Ausfallschutz, Medien-Management, Hochschul-Organisation und automatisierte Hintergrund-Workflows nach dem Prinzip "Security by Design".
+Repository zur Dokumentation meines selbstgebauten, vollkommen cloud-freien Heimservers. Das System dient als zentrale Infrastruktur für Datenhaltung mit Ausfallschutz, Medien-Management, Hochschul-Organisation und automatisierte Hintergrund-Workflows.
 
 ---
 
-## 1. Warum ein eigener Heimserver? (Zweck & Motivationsmatrix)
+## 1. Warum ein eigener Heimserver?
 
 * **Vollständige Datensouveränität & Datenschutz:** Ablösung kommerzieller Cloud-Anbieter. Meine vertraulichen Daten, Dokumente und Notizen verbleiben physisch auf eigenen Datenträgern - ohne Tracking, Datenanalyse oder Mitleserechte durch Dritte.
 * **Unabhängigkeit von Streaming-Plattformen:** Keine Abhängigkeit von Abo-Modellen, Preiserhöhungen, Werbeeinblendungen, Geoblocking oder verschwindenden Inhalten aus Lizenzgründen.
 * **Fokus & bewusster Medienkonsum:** Selbstgehostete Mediatheken frei von Empfehlungs-Algorithmen, Scroll-Spiralen und Werbeunterbrechungen.
 * **Digitalisierung & Langzeitarchivierung:** Physische Medien (z. B. eigene CDs, DVDs, Fachbücher) verlustfrei digitalisieren, strukturieren und dauerhaft sichern.
 * **Zentralisierung von Hochschul-Dokumenten:** Ein organisierter, gegen den Ausfall einer Platte geschützter Ort (Parity) für alle Vorlesungsunterlagen, Mitschriften und Skripte - von jedem Gerät aus erreichbar.
-* **Finanzielle Kontrolle & Nachhaltigkeit (FinOps):** Vermeidung wiederkehrender monatlicher Cloud-Abonnements zugunsten einer einmaligen, energieeffizienten Hardware-Investition.
-* **Praxisnahes IT-Labor:** Fundierte Vertiefung von Kenntnissen in Linux-Systemadministration, Container-Virtualisierung, Speichermanagement und IT-Sicherheit weit über das theoretische Studium hinaus.
+* **Kosten:** Einmal Hardware kaufen statt jeden Monat Cloud-Abos bezahlen.
+* **Praxisnahes IT-Labor:** Linux-Administration, Container, Speicherverwaltung und IT-Sicherheit an einem echten System lernen, parallel zum Studium.
 
 ---
 
 ## 2. Verbaute Hardware & Technische Begründung
 
-| Komponente | Exaktes Modell | Architektonischer Grund & Vorteil |
+| Komponente | Modell | Warum |
 | :--- | :--- | :--- |
-| **CPU** | Intel Core i3-12100 | 4C/8T. UHD 730 iGPU mit **Intel QuickSync** für stromsparendes 4K-Hardware-Transcoding in Jellyfin; hohe Single-Core-Leistung & AVX2-Befehlssatz. |
-| **GPU (KI / Beschleunigung)** | Nvidia GeForce GTX 1070 (8 GB) | Kosteneffiziente Budget-Wahl für lokale LLM-Inferenz (Ollama) und GPU-Beschleunigung von KI-Workflows (Faster-Whisper Sprach-zu-Text). |
-| **Mainboard** | Gigabyte B760M DS3H DDR4 GEN5 | Micro-ATX mit Unterstützung für tiefe **C-States (C8/C10)** unter Linux (minimaler Idle-Verbrauch); nativer 2.5 GbE LAN-Port für schnelle Datenübertragung. |
-| **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-Channel (1.2V JEDEC-Standard) für 24/7-Stabilität; bietet ausreichend Puffer für parallele Docker-Container. |
-| **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | PCIe 4.0 HMB-NVMe für maximale I/O-Performance bei Docker-Containern, Appdata-Datenbanken und dem Unraid Inbound-Cache. |
-| **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3,5", CMR) | Paritätsgeschützter Unraid-Storage-Pool (**1x Parity + 1x Data**). CMR-Technologie verhindert Leistungseinbrüche; XOR-Parität schützt vor Festplattenausfall. |
+| **CPU** | Intel Core i3-12100 | 4 Kerne / 8 Threads. Die UHD-730-iGPU hat **Intel QuickSync** für Hardware-Transcoding in Jellyfin und Tdarr. |
+| **GPU (KI / Beschleunigung)** | Nvidia GeForce GTX 1070 (8 GB) | Günstige Karte mit 8 GB VRAM für lokale KI: Ollama und Whisper-Transkription. Die Container greifen über das Nvidia-Treiber-Plugin darauf zu. |
+| **Mainboard** | Gigabyte B760M DS3H DDR4 GEN5 | Micro-ATX-Board mit genug SATA-Anschlüssen für die Platten und 2,5-GbE-LAN onboard. |
+| **RAM** | 32 GB Crucial Pro DDR4-3200 (2x16GB) | Dual-Channel; genug Reserve für viele gleichzeitig laufende Container. |
+| **System SSD** | 1 TB WD Blue SN580 NVMe M.2 | Enthält die Container-Daten (appdata) und dient als Schreib-Cache, damit die HDDs öfter schlafen können. |
+| **HDDs (Array)** | 2x 10 TB HPE Enterprise HDDs (3,5", CMR) | Gebraucht gekauft. Eine ist die Parity-Platte, eine eine Data-Platte; die Parität schützt vor dem Ausfall einer Platte. |
 | **HDDs (Array, wiederverwendet)** | 1x 500 GB (aus einem Laptop von 2012) + 1x 250 GB (aus einem alten Receiver) | Zusätzliche Data-Platten im selben Array, aus vorhandener Hardware ergänzt. Jede Data-Platte hat ein eigenes Dateisystem; die Parity-Platte (10 TB) ist mindestens so groß wie die größte Data-Platte. Daten, auch die Uni-Dateien, verteilen sich auf die Data-Platten (High-water-Zuteilung). |
-| **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Slim-Laufwerk, per USB-Adapter angeschlossen; LibreDrive-Kompatibilität zum verlustfreien Auslesen eigener Medien. *Hinweis:* Auslesen rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
-| **Bootmedium** | 64 GB Samsung BAR Plus (USB 3.1) | Schreibgeschützter Unraid-Boot-Stick; robustes Metallgehäuse für optimale Wärmeableitung im 24/7-Dauerbetrieb. |
-| **CPU-Kühler** | Thermalright Assassin X 120 SE | Tower-Kühler mit leisem 120mm PWM-Lüfter; verhindert Thermal Throttling bei dauerhafter CPU-Volllast. |
-| **Netzteil** | be quiet! System Power 11 450W (80+ Bronze) | Hocheffizientes Netzteil mit nativer C6/C7-State-Unterstützung für minimale Verlustleistung bei niedriger Idle-Last. |
-| **Gehäuse** | Fractal Design Define R5 (Black) | ATX Midi-Tower mit Schalldämmung, entkoppelten Festplattenschächten (Vibrationsdämpfung) und großzügigen Staubfiltern. |
+| **Opt. Laufwerk**| LG HLDS BU40N Ultra Slim UHD-Brenner | Slim-Laufwerk, per USB-Adapter angeschlossen, zum Auslesen eigener Blu-rays. *Hinweis:* Auslesen rein im Rahmen geltender Urheberrechtsbestimmungen (§ 95a UrhG); kein Aufbrechen wirksamer Kopierschutzmechanismen. |
+| **Bootmedium** | 64 GB Samsung BAR Plus (USB 3.1) | Unraid startet vom USB-Stick und läuft aus dem Arbeitsspeicher. |
+| **CPU-Kühler** | Thermalright Assassin X 120 SE | Leiser Tower-Kühler mit 120-mm-Lüfter. |
+| **Netzteil** | be quiet! System Power 11 450W (80+ Bronze) | Reicht für das aktuelle System inklusive GTX 1070. Grenze: Eine stromhungrigere Grafikkarte bräuchte ein stärkeres Netzteil. |
+| **Gehäuse** | Fractal Design Define R5 (Black) | Gedämmtes Gehäuse mit Platz für mehrere 3,5"-Platten und Staubfiltern. |
 
 ---
 
 ## 3. Software-Architektur & Medien-Stack
 
-Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept aus dem Arbeitsspeicher) und betreibt alle Anwendungen prozessisoliert in **Docker-Containern**.
+Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept aus dem Arbeitsspeicher) und betreibt alle Anwendungen in **Docker-Containern**.
 
 ```text
 +-------------------------------------------------------------------+
 |                     DOCKER APPLICATION STACK                      |
 | +------------+---------------+------------------+---------------+ |
 | | Jellyfin   | Navidrome     | Tdarr Engine     | Ollama        | |
-| | (Video)    | (Hi-Fi Musik) | (Transcoding)    | (Lokale KI)   | |
+| | (Video)    | (Musik)      | (Transcoding)    | (Lokale KI)   | |
 | +------------+---------------+------------------+---------------+ |
 | | Administrative Tools, Syncthing & Tailscale Mesh-VPN          | |
 +---------------------------------------+---------------------------+
@@ -68,15 +67,15 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 ### 3.1 Videostreams & Heimkino (Jellyfin)
 
-**Direct Play & Hardware-Beschleunigung:** Reines, open-source Medienserver-Setup ohne externe Pass-Through-Server. Nutzt die Intel UHD 730 Grafikeinheit (QuickSync) für verzögerungsfreies Hardware-Transcoding im Bedarfsfall.
+**Direct Play & Hardware-Beschleunigung:** Open-Source-Medienserver. Kann ein Gerät eine Datei direkt abspielen, schickt Jellyfin sie unverändert (Direct Play); sonst transkodiert die Intel UHD 730 (QuickSync).
 
-**Plattformunabhängig:** Streamt unkomprimierte Inhalte direkt an Endgeräte im Heimnetz (z. B. Apple TV 4K) sowie an mobile Clients unterwegs.
+**Geräte:** Streaming-Sticks im Heimnetz und das Handy unterwegs (über Tailscale).
 
-### 3.2 Hi-Fi Musikbibliothek (Navidrome)
+### 3.2 Musikbibliothek (Navidrome)
 
-**High-Performance Streaming:** Ressourcenschonender, in Go geschriebener Musikserver für eigene CD-Rips (FLAC/MP3).
+**Schlanker Musikserver:** In Go geschrieben, für eigene CD-Rips (FLAC/MP3).
 
-**Universelle Schnittstelle:** Nutzt die Subsonic-API zur nahtlosen Anbindung mobiler Apps (iPhone/Android) im Auto oder unterwegs, ohne auf Drittanbieter-Abo-Dienste angewiesen zu sein.
+**Subsonic-API:** Funktioniert mit gängigen Musik-Apps auf iPhone und Android, im Auto oder unterwegs, ohne Streaming-Abo.
 
 ### 3.3 Automatische Medienoptimierung (Tdarr Pipeline)
 
@@ -85,11 +84,11 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
   * **Hohe Auflösung (1080p/4K):** Auslagerung an **Intel QuickSync (GPU)** für ein besonders schnelles und energieeffizientes H.265-Transcoding.
 * **Automatisierte Flow-Pipeline:** Greift Rohdateien aus dem `/watch_folder` ab, prüft Codec/Bitrate/Auflösung, transkodiert selektiv und verschiebt die fertigen Medien direkt in die Jellyfin-Mediathek.
 
-**Automatisierter Node-Workflow:** Reduziert die Dateigrößen bei gleichbleibender visueller Qualität drastisch, spart Speicherplatz auf den 10-TB-HDDs und schont die Netzwerk-Bandbreite.
+**Ergebnis:** Kleinere Dateien bei kaum sichtbarem Qualitätsverlust; spart Platz auf den HDDs und Bandbreite beim Streamen.
 
 ### 3.4 Automatisierter E-Ink Workflow & Vorlesungs-Transkription (Syncthing, Whisper & Ollama)
 
-* **Nahtlose Dokumenten-Synchronisation:** Bi-direktionale Hintergrund-Synchronisation zwischen dem Onyx Boox Go 10.3 Tablet und dem Unraid-Server mittels **Syncthing** über eine verschlüsselte **Tailscale-VPN**-Verbindung (ermöglicht sicheren Remote-Zugriff aus dem Campusnetz der HTWG Konstanz).
+* **Dokumenten-Synchronisation:** Zwei-Wege-Synchronisation zwischen dem Onyx Boox Go 10.3 und dem Unraid-Server mit **Syncthing** über **Tailscale**, auch vom Campus der HTWG Konstanz aus.
 * **Lokale Audio-Transkription:** Vorlesungsaufnahmen vom Tablet werden jede Nacht von **Whisper `large-v3`** transkribiert (faster-whisper-Engine, GPU-beschleunigt auf der GTX 1070 mit `int8`), ganz ohne Cloud-Dienst.
 * **Lern-Zusammenfassungen:** Ein lokales Sprachmodell (**Ollama**) erstellt aus jedem Transkript eine strukturierte Zusammenfassung; Transkript und Zusammenfassung werden automatisch im passenden Fachordner abgelegt, und die Aufnahme wird außerhalb des synchronisierten Ordners archiviert, damit sie auf dem Tablet keinen Platz mehr belegt.
 * **Ansatz für Automatisierungen:** Die frühere Steuerung über n8n wurde entfernt, weil Wartungsaufwand und Ressourcenverbrauch in keinem Verhältnis zur Aufgabe standen. Automatisierungen laufen auf diesem Server inzwischen als schlanke Bash-Skripte; die Transkriptions-Pipeline läuft als nächtlicher Batch-Job (siehe [`scripts/transkript/`](scripts/transkript/)).
@@ -97,7 +96,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 ### 3.5 Lokale KI-Wochenzeitung (Bash & Ollama)
 
 * **Komplett lokaler Nachrichtenüberblick:** Jeden Mittwoch um 04:00 Uhr sammelt eine Kette aus Bash-Skripten die Meldungen der vergangenen Woche aus RSS-/Atom-Feeds, lässt ein lokales Sprachmodell (**Ollama**, `qwen3.5:9b` auf der GTX 1070) daraus eine deutsche Wochenzeitung schreiben (Innen- & Außenpolitik mit Einordnung der Auswirkungen, Cybersecurity & Open Source, Märkte) und baut daraus eine eigenständige HTML-Seite mit Quellenlinks.
-* **Zuverlässigkeit als Grundprinzip:** Eine geprüfte Modellanfrage pro Rubrik (Prüfung von `done_reason`, Wiederholungen), fest gesetztes Kontextfenster, atomares Schreiben, Sperre gegen Doppelstarts und Protokollierung pro Schritt.
+* **Zuverlässigkeit:** Eine geprüfte Modellanfrage pro Rubrik (Prüfung von `done_reason`, Wiederholungen), fest gesetztes Kontextfenster, atomares Schreiben, Sperre gegen Doppelstarts und Protokollierung pro Schritt.
 * **Lesen auf dem E-Ink-Tablet:** Die neueste Ausgabe wird per Syncthing auf den Onyx Boox übertragen (*Nur senden* / *Nur empfangen*), ältere Ausgaben werden automatisch entfernt. Details in [`scripts/zeitung/`](scripts/zeitung/).
 
 ### 3.6 Eigener Kalender- & Chat-Bot (Radicale, Matrix & Ollama)
@@ -143,7 +142,9 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 ## 4. Roadmap & Geplante Erweiterungen
 
-- [x] E-Ink-Pad Automatisierung: Einrichten der drahtlosen Dokumenten-Synchronisation (Syncthing / OPDS) für das Onyx Boox Schreibpad.
+- [x] E-Ink-Pad Automatisierung: Drahtlose Dokumenten-Synchronisation (Syncthing) für das Onyx Boox Schreibpad.
+
+- [ ] E-Book-Server: Calibre-Web mit OPDS für das Onyx Boox.
 
 - [x] Lokale KI-Transkription: Nächtliche Pipeline mit Whisper (GPU) und Ollama, die Vorlesungsaufnahmen transkribiert, zusammenfasst, einsortiert und archiviert (siehe [`scripts/transkript/`](scripts/transkript/)).
 
@@ -165,7 +166,7 @@ Das System nutzt **Unraid OS** als Host-Betriebssystem (stateless Boot-Konzept a
 
 - [x] Morgenbriefing: Tägliche Matrix-Nachricht mit den heutigen Terminen, anstehenden Abgaben und dem Wetter (siehe [`scripts/morgenbriefing/`](scripts/morgenbriefing/)).
 
-- [x] Netzwerk-Härtung: Konfiguration von Zero-Trust Access Control Lists (Tailscale ACLs) zur Isolation mobiler Endgeräte (siehe [`docs/security-concept.md`](docs/security-concept.md)).
+- [x] Netzwerk-Härtung: Tag-basierte Tailscale-ACLs, die jedes mobile Gerät auf die Dienste beschränken, die es braucht (siehe [`docs/security-concept.md`](docs/security-concept.md)).
 
 ## 5. Repository-Struktur
 
