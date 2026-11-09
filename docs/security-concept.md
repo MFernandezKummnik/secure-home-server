@@ -60,4 +60,4 @@ To minimize the attack surface, local services are not exposed directly to the p
 
 ## 4. Legal Compliance & Ethical Standards
 
-* **Copyright Compliance (§ 95a UrhG):** Digital media extraction using MakeMKV and LibreDrive is conducted exclusively for private archiving and format shifting of legitimately owned physical media. No effective technological copy protection mechanisms are unlawfully bypassed.
+* **Copyright Compliance (§ 95a UrhG):** MakeMKV is used only to archive physical media I own, for private use. The drive runs its original firmware, and no copy protection is circumvented.

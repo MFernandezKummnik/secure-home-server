@@ -42,7 +42,7 @@ The system utilizes Unraid OS's hybrid storage architecture to balance parity pr
 
 The ingestion pipeline uses a dedicated three-drive physical setup to extract media without cross-contaminating optical drive workloads or causing premature wear.
 
-* **LG HLDS BU40N Ultra Slim UHD Burner:** Connected via USB adapter, flashed with LibreDrive firmware. Dedicated exclusively to 4K UHD and standard Blu-ray discs.
+* **LG HLDS BU40N Ultra Slim UHD Burner:** Connected via USB adapter, original firmware (not flashed). Dedicated to Blu-ray discs.
 * **DVD Drive:** Dedicated exclusively to standard DVD extraction.
 * **Legacy PC Optical Drive:** Dedicated exclusively to Audio CD extraction.
 

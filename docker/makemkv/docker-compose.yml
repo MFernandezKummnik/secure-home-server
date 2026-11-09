@@ -10,7 +10,7 @@ services:
       - TZ=Europe/Berlin
       - AUTO_DISC_RIP=1
     devices:
-      # Drive 1: LG BU40N (Blu-ray / LibreDrive)
+      # Drive 1: LG BU40N (Blu-ray, original firmware)
       - /dev/sr0:/dev/sr0
       - /dev/sg0:/dev/sg0
       # Drive 2: Origbele Drive (DVD)
